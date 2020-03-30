@@ -1,0 +1,53 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<link href="../static/dashboard/index.css" th:href="@{/dashboard/index.css}" rel="stylesheet"/>
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	</head>
+	<body>
+		<div class="container">
+	        <div class="card-hover-shadow-2x mb-3 card">
+	            <div class="card-header-tab card-header">
+	                <div class="card-header-title font-size-lg text-capitalize font-weight-normal"><i class="fa fa-tasks"></i>&nbsp;Task Lists</div>
+	            </div>
+	            <div class="scroll-area-sm">
+	                <perfect-scrollbar class="ps-show-limits">
+	                    <div style="position: static;" class="ps ps--active-y">
+	                        <div class="ps-content">
+								<form id="main" action="" method="post">
+									<ul class=" list-group list-group-flush">
+										<!--for each-->
+										<tr th:each="task : ${tasks}">
+											<li class="list-group-item">
+												<!--print task-->
+												<div class="todo-indicator bg-primary"></div>
+												<div class="widget-content p-0">
+													<div class="widget-content-wrapper">
+														<div class="widget-content-left mr-2">
+															<p style="font-weight: 900;"><!--ID--></p>
+														</div>
+														<div class="widget-content-left flex2">
+															<div class="widget-heading"><td th:text="${task.task}"></td></div>
+														</div>
+														<div class="widget-content-right"> </button> <button class="border-0 btn-transition btn btn-outline-danger" name="delete" th:attr="value = ${task.id}" form="main"> <i class="fa fa-trash"></i> </button> </div>
+													</div>
+												</div>
+											</li>
+										</tr>
+									</ul>
+								</form>
+	                        </div>
+	                    </div>
+	                </perfect-scrollbar>
+	            </div>
+	            <div class="d-block text-right card-footer">
+	            	<form action="" id="addItemToListButton" method="post">
+		            	<input type="text" class="form-control" placeholder="add task" aria-label="Username" aria-describedby="basic-addon1" name="addTask">
+		            	<button class="btn btn-primary" form="addItemToListButton">Add Task</button>
+	            	</form>
+	            </div>
+	        </div>
+	    </div>
+	</body>
+</html>
