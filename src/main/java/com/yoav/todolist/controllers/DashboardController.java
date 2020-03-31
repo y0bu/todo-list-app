@@ -4,14 +4,17 @@ import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Task;
 import com.yoav.todolist.service.AccountService;
 import com.yoav.todolist.service.TaskService;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Controller
@@ -37,8 +40,8 @@ public class DashboardController {
         if (usernameOfLoggedUser == null) {
             return "redirect:/";
         }
-        List<Task> tasks = accountService.findByUsername(usernameOfLoggedUser).getTasks();
-        model.addAttribute("tasks", tasks);
+        Account thisAccount = accountService.findByUsername(usernameOfLoggedUser);
+        model.addAttribute("tasks", thisAccount.getTasks());
         return "dashboard/index";
     }
 
@@ -53,6 +56,9 @@ public class DashboardController {
 
     @RequestMapping(value = "/dashboard", method = RequestMethod.POST, params = "addTask")
     public String postDashboardAddTask(@RequestParam String addTask, HttpSession session) {
+        if (addTask.trim().equals("")) {
+            return "redirect:/dashboard";
+        }
         Task addedTask = new Task(addTask);
         String usernameOfLoggedUser = (String)session.getAttribute("username");
         Account thisAccount = accountService.findByUsername(usernameOfLoggedUser);

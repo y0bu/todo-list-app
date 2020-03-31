@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -27,8 +28,8 @@ public class AccountService {
         return accountDao.isExistByUsername(username);
     }
 
-    public void delete(Account account) {
-        accountDao.delete(account);
+    public void deleteById(int id) {
+        accountDao.deleteById(id);
     }
 
     public void add(Account account) {
@@ -37,5 +38,13 @@ public class AccountService {
 
     public Account findByUsername(String username) {
         return accountDao.findByUsername(username);
+    }
+
+    public List<Account> getAll() {
+        return accountDao.findAll();
+    }
+
+    public Account findById(int id) {
+        return accountDao.findById(id);
     }
 }

@@ -8,4 +8,5 @@ import org.springframework.stereotype.Component;
 public interface ITaskDao {
     void add(Task task, Account account);
     void deleteById(int id);
+    Task getById(int id);
 }

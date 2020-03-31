@@ -50,6 +50,13 @@ public class Task {
     }
 
     @Override
+    public boolean equals(Object o) {
+        Task theEquator = (Task) o;
+        if (theEquator.getId() == this.id) return true;
+        else return false;
+    }
+
+    @Override
     public String toString() {
         return "Task{" +
                 "id=" + id +
