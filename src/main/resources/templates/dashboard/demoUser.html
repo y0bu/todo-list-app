@@ -1,0 +1,69 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href="../static/dashboard/index.css" th:href="@{/dashboard/index.css}" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div class="card-hover-shadow-2x mb-3 card">
+        <div class="card-header-tab card-header">
+            <div class="card-header-title font-size-lg text-capitalize font-weight-normal"><i class="fa fa-tasks"></i>&nbsp;Task Lists</div>
+            <form id="signupRedirect" action="/signup" method="get">
+                <button type="submit" class="btn btn-success" form="signupRedirect" style="right: -883px; margin-top: 0px;position: relative;left: 624px;top: 8px;">Having Fun? Click Here To Sign Up</button>
+            </form>
+            <form id="logout" action="" method="post">
+                <button name="logout" type="submit" class="btn btn-secondary" form="logout" style="right: -900px; margin-top: 0px;position: relative;left: 626px;top: 8px;">Log Out</button>
+            </form>
+        </div>
+        <div class="scroll-area-sm">
+            <perfect-scrollbar class="ps-show-limits">
+                <div style="position: static;" class="ps ps--active-y">
+                    <div class="ps-content">
+                        <ul class="list-group list-group-flush" id="theList">
+
+                        </ul>
+                    </div>
+                </div>
+            </perfect-scrollbar>
+        </div>
+        <div class="d-block text-right card-footer">
+            <input type="text" class="form-control" placeholder="add task" aria-label="Username" aria-describedby="basic-addon1" id="addTask">
+            <button class="btn btn-primary" onclick="addItemToList()">Add Task</button>
+        </div>
+    </div>
+</div>
+<script>
+    var id = 1;
+
+    function addItemToList() {
+        let taskValue = document.getElementById("addTask").value;
+        let theList = document.getElementById("theList");
+        console.log("heyyy");
+        let str = '';
+        str += '<li class="list-group-item" id="' + id + '">';
+        str += '<div class="todo-indicator bg-primary"></div>';
+        str += '<div class="widget-content p-0">';
+        str += '<div class="widget-content-wrapper">';
+        str += '<div class="widget-content-left mr-2">';
+        str += '<p style="font-weight: 900;"></p>';
+        str += '</div>';
+        str += '<div class="widget-content-left flex2">';
+        str += '<div class="widget-heading"><td>' + taskValue + '</td></div>';
+        str += '</div>';
+        str += '<div class="widget-content-right"> </button> <button class="border-0 btn-transition btn btn-outline-danger" onclick="removeItemFromList(' + id + ')"> <i class="fa fa-trash"></i> </button> </div>';
+        str += '</div>';
+        str += '</div>';
+        str += '</li>';
+        theList.innerHTML += str;
+        id += 1;
+    }
+
+    function removeItemFromList(idOfDeletingLi) {
+        var elem = document.getElementById(idOfDeletingLi);
+        elem.parentNode.removeChild(elem);
+    }
+</script>
+</body>
+</html>

@@ -26,6 +26,11 @@ public class DashboardController {
         this.taskService = taskService;
     }
 
+    @RequestMapping(value = "/dashboard", params = "demoUser", method = RequestMethod.POST)
+    public String getDashboardUserDemo() {
+        return "dashboard/demoUser";
+    }
+
     @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
     public String getDashboard(Model model, HttpSession session) {
         String usernameOfLoggedUser = (String)session.getAttribute("username");
