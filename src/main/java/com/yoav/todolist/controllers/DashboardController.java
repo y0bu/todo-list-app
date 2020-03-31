@@ -54,4 +54,10 @@ public class DashboardController {
         taskService.add(addedTask, thisAccount);
         return "redirect:/dashboard";
     }
+
+    @RequestMapping(value = "/dashboard", method = RequestMethod.POST, params = "logout")
+    public String postDashboardLogout(HttpSession session) {
+        session.removeAttribute("username");
+        return "redirect:/";
+    }
 }
