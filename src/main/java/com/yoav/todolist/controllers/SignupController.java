@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class SignupController {
@@ -29,7 +30,8 @@ public class SignupController {
     public String postSignup(Model model,
                              @RequestParam String username,
                              @RequestParam String password,
-                             @RequestParam String passwordAgain) {
+                             @RequestParam String passwordAgain,
+                             RedirectAttributes attributes) {
 
         String passwordAlert = chooseAlertWeakPassword(password);
         if (!password.equals(passwordAgain)) {
@@ -47,8 +49,8 @@ public class SignupController {
         else {
             // we do not have any problems
             accountService.add(new Account(username, password));
-            model.addAttribute("alert", "you signed up successfully now you can log in");
-            return "login/index";
+            attributes.addFlashAttribute("alert", "you signed up successfully now you can log in");
+            return "redirect:/login";
         }
     }
 
