@@ -10,8 +10,8 @@
         <form id="goBack" method="get" action="/">
             <button class="btn btn-primary btn-md" form="goBack">GO Home</button>
         </form>
-        <form id="createAdmin" method="get" action="">
-            <button class="btn btn-success btn-md" form="createAdmin" name="createAdmin">Create New Admin</button>
+        <form id="createAdmin" method="get" action="/admin/add">
+            <button class="btn btn-success btn-md" form="createAdmin">Create New Admin</button>
         </form>
         <table class="table">
             <thead class="thead-dark">
@@ -23,9 +23,9 @@
                 </tr>
             </thead>
             <tbody>
-                <form action="" method="post" id="mainForm">
+                <form action="/admin" method="post" id="mainForm">
                     <tr th:each="account : ${accounts}">
-                        <td><button type="submit" name="manageAccount" form="mainForm" th:attr="value = ${account.id}" class="btn btn-secondary btn-sm">Manage Tasks</button>
+                        <td><button type="submit" formmethod="get" th:attr="formaction = ${urlToRedirect} + ${account.username}" class="btn btn-secondary btn-sm">Manage Tasks</button>
                             <button type="submit" name="deleteAccount" form="mainForm" th:attr="value = ${account.id}" class="btn btn-danger btn-sm">Delete Account</button></td>
                         <td th:text="${account.id}"></td>
                         <td th:text="${account.username}"></td>
