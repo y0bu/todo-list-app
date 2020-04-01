@@ -4,17 +4,25 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        @media screen and (max-width: 600px) {
+            .havingFunButton{
+                visibility: hidden;
+            }
+        }
+    </style>
 </head>
 <body>
+
 <div class="container">
     <div class="card-hover-shadow-2x mb-3 card">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal"><i class="fa fa-tasks"></i>&nbsp;Task Lists</div>
             <form id="signupRedirect" action="/signup" method="get">
-                <button type="submit" class="btn btn-success" form="signupRedirect" style="right: -883px; margin-top: 0px;position: relative;left: 624px;top: 8px;">Having Fun? Click Here To Sign Up</button>
+                <button type="submit" class="btn btn-success havingFunButton" form="signupRedirect" style="position: absolute; right: 70; top: 8px;">Having Fun? Click Here To Sign Up</button>
             </form>
             <form id="logout" action="" method="post">
-                <button name="logout" type="submit" class="btn btn-secondary" form="logout" style="right: -900px; margin-top: 0px;position: relative;left: 626px;top: 8px;">Log Out</button>
+                <button name="logout" type="submit" class="btn btn-secondary" form="logout" style="position: absolute; right: 8; top: 8px;">Exit</button>
             </form>
         </div>
         <div class="scroll-area-sm">
