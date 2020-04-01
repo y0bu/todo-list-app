@@ -56,6 +56,7 @@ public class AdminController {
     public String getAllAccountsMainAdminPanel(HttpSession session, Model model) {
         if (session.getAttribute("isAdmin") != null) {
             model.addAttribute("accounts", accountService.getAll());
+            model.addAttribute("urlToRedirect", "/admin/");
             return "admin/displayUsers";
         } else {
             // TODO rise unauthorized error
@@ -94,7 +95,7 @@ public class AdminController {
     @RequestMapping(value = "/admin/add", method = RequestMethod.GET)
     public String getCreateNewAdmin(HttpSession session) {
         if (session.getAttribute("isAdmin") == null) return "unauthorized";
-        else return "admin/createAccount";
+        else return "admin/createAdmin";
     }
 
     @RequestMapping(value = "/admin/add", method = RequestMethod.POST, params = {"adminName", "password"})
