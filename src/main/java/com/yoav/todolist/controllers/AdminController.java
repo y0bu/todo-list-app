@@ -8,9 +8,13 @@ import com.yoav.todolist.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class AdminController {
@@ -27,84 +31,117 @@ public class AdminController {
         adminService.checkIfBaseAdminAccountExist();
     }
 
-    @RequestMapping(value = "/admin", method = RequestMethod.GET)
-    public String getAdminLogin() {
+    @RequestMapping(value = "/admin/login", method = RequestMethod.GET)
+    public String getLoginAdmin() {
         return "admin/login";
     }
 
-    @RequestMapping(value = "/admin", method = RequestMethod.POST, params = {"adminName", "password"})
-    public String postAdminLogin(@RequestParam String adminName, @RequestParam String password, Model model) {
+    @RequestMapping(value = "/admin/login", method = RequestMethod.POST, params = {"adminName", "password"})
+    public String postValidateLoginAdmin(
+            @RequestParam String adminName,
+            @RequestParam String password,
+            Model model,
+            HttpSession session) {
+
         if (adminService.isExistByAdminNameAndPassword(adminName, password)) {
-            model.addAttribute("accounts", accountService.getAll());
-            return "admin/displayUsers";
+            session.setAttribute("isAdmin", true);
+            return "redirect:/admin";
         } else {
-            model.addAttribute("alert", "password and/or admin name are incorrect");
+            model.addAttribute("alert", "the password and/or username are incorrect");
             return "admin/login";
         }
     }
 
-    @RequestMapping(value = "/admin", method = RequestMethod.POST, params = "goBack")
-    public String postAdminGoBack(Model model) {
-        model.addAttribute("accounts", accountService.getAll());
-        return "admin/displayUsers";
-    }
-
-    @RequestMapping(value = "/admin", method = RequestMethod.POST, params = "manageAccount")
-    public String postAdminManageAndDisplayAccountTasks(@RequestParam String manageAccount, Model model) {
-        int accountId = Integer.parseInt(manageAccount);
-        Account account = accountService.findById(accountId);
-        model.addAttribute("tasks", account.getTasks());
-        model.addAttribute("accountId", account.getId());
-        return "admin/displayTasksOfUsers";
+    @RequestMapping(value = "/admin", method = RequestMethod.GET)
+    public String getAllAccountsMainAdminPanel(HttpSession session, Model model) {
+        if (session.getAttribute("isAdmin") != null) {
+            model.addAttribute("accounts", accountService.getAll());
+            return "admin/displayUsers";
+        } else {
+            // TODO rise unauthorized error
+            return "unauthorized";
+        }
     }
 
     @RequestMapping(value = "/admin", method = RequestMethod.POST, params = "deleteAccount")
-    public String postAdminDeleteAccount(@RequestParam String deleteAccount, Model model) {
-        accountService.deleteById(Integer.parseInt(deleteAccount));
-        model.addAttribute("accounts", accountService.getAll());
-        return "admin/displayUsers";
+    public String postDeleteAccount(@RequestParam String deleteAccount, HttpSession session) {
+        if (session.getAttribute("isAdmin") == null) return "unauthorized";
+        int idOfDeletingAccount = Integer.parseInt(deleteAccount);
+        accountService.deleteById(idOfDeletingAccount);
+        return "redirect:/admin";
     }
 
-    @RequestMapping(value = "/admin", method = RequestMethod.POST, params = "deleteTask")
-    public String postAdminDeleteTask(@RequestParam String deleteTask, @RequestParam String accountId, Model model) {
-        int idOfDeletingTask = 0;
-        try {
-            idOfDeletingTask = Integer.parseInt(deleteTask);
-        } catch (NumberFormatException e) {
-            model.addAttribute("accounts", accountService.getAll());
-            return "admin/displayUsers";
-        }
-        taskService.delete(idOfDeletingTask);
-        int accountIdInt = 0;
-        try {
-            accountIdInt = Integer.parseInt(accountId);
-        } catch (NumberFormatException e) {
-            model.addAttribute("accounts", accountService.getAll());
-            return "admin/displayUsers";
-        }
-        Account account = accountService.findById(accountIdInt);
-        model.addAttribute("tasks", account.getTasks());
+    @RequestMapping(value = "/admin/{usernameOfAccount}", method = RequestMethod.GET)
+    public String getTasksOfNameOfAccounts(@PathVariable String usernameOfAccount, HttpSession session, Model model) {
+        if (session.getAttribute("isAdmin") == null) return "unauthorized";
+        Account requestedAccount = accountService.findByUsername(usernameOfAccount);
+        model.addAttribute("tasks", requestedAccount.getTasks());
         return "admin/displayTasksOfUsers";
     }
 
-    @RequestMapping(value = "/admin", method = RequestMethod.GET, params = "createAdmin")
-    public String getAdminCreateAdmin() {
-        return "admin/createAdmin";
+    @RequestMapping(value = "/admin/{usernameOfAccount}", method = RequestMethod.POST, params = "deleteTask")
+    public String postDeleteTasksOfUsername(
+            @RequestParam String deleteTask,
+            @PathVariable String usernameOfAccount,
+            HttpSession session) {
+
+        if (session.getAttribute("isAdmin") == null) return "unauthorized";
+        int idOfDeletingTask = Integer.parseInt(deleteTask);
+        taskService.delete(idOfDeletingTask);
+        return "redirect:/admin/" + usernameOfAccount;
     }
 
-    @RequestMapping(value = "/admin", method = RequestMethod.POST, params = {"newAdminName", "newPassword"})
-    public String postAdminCreateAdmin(@RequestParam(name = "newAdminName") String adminName,
-                                       @RequestParam(name = "newPassword") String password,
-                                       Model model) {
+    @RequestMapping(value = "/admin/add", method = RequestMethod.GET)
+    public String getCreateNewAdmin(HttpSession session) {
+        if (session.getAttribute("isAdmin") == null) return "unauthorized";
+        else return "admin/createAccount";
+    }
+
+    @RequestMapping(value = "/admin/add", method = RequestMethod.POST, params = {"adminName", "password"})
+    public String postAddAdmin(
+            @RequestParam String adminName,
+            @RequestParam String password,
+            HttpSession session,
+            Model model,
+            RedirectAttributes attributes) {
+
+        if (session.getAttribute("isAdmin") == null) return "unauthorized";
 
         if (adminService.isExistByAdminName(adminName)) {
-            model.addAttribute("alert", "the admin name is already exist try anther one");
-            return "admin/createAdmin";
+            model.addAttribute("alert", "admin name is already have been taken");
+            return "admin/login";
         } else {
             Admin newAdmin = new Admin(adminName, password);
             adminService.add(newAdmin);
-            model.addAttribute("alert", "the admin created successfully you can log in now");
-            return "admin/login";
+            attributes.addFlashAttribute("alert", "the admin added successfully you can log in now");
+            return "redirect:/admin/login";
         }
     }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
