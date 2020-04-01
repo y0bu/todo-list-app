@@ -110,7 +110,7 @@ public class AdminController {
 
         if (adminService.isExistByAdminName(adminName)) {
             model.addAttribute("alert", "admin name is already have been taken");
-            return "admin/login";
+            return "admin/createAdmin";
         } else {
             Admin newAdmin = new Admin(adminName, password);
             adminService.add(newAdmin);
