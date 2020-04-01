@@ -1,6 +1,7 @@
 package com.yoav.todolist.controllers;
 
 import com.yoav.todolist.models.Account;
+import com.yoav.todolist.models.Admin;
 import com.yoav.todolist.service.AccountService;
 import com.yoav.todolist.service.AdminService;
 import com.yoav.todolist.service.TaskService;
@@ -84,5 +85,26 @@ public class AdminController {
         Account account = accountService.findById(accountIdInt);
         model.addAttribute("tasks", account.getTasks());
         return "admin/displayTasksOfUsers";
+    }
+
+    @RequestMapping(value = "/admin", method = RequestMethod.GET, params = "createAdmin")
+    public String getAdminCreateAdmin() {
+        return "admin/createAdmin";
+    }
+
+    @RequestMapping(value = "/admin", method = RequestMethod.POST, params = {"newAdminName", "newPassword"})
+    public String postAdminCreateAdmin(@RequestParam(name = "newAdminName") String adminName,
+                                       @RequestParam(name = "newPassword") String password,
+                                       Model model) {
+
+        if (adminService.isExistByAdminName(adminName)) {
+            model.addAttribute("alert", "the admin name is already exist try anther one");
+            return "admin/createAdmin";
+        } else {
+            Admin newAdmin = new Admin(adminName, password);
+            adminService.add(newAdmin);
+            model.addAttribute("alert", "the admin created successfully you can log in now");
+            return "admin/login";
+        }
     }
 }
