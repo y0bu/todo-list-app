@@ -2,7 +2,9 @@ package com.yoav.todolist.dao;
 
 import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Admin;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
+
 
 @Repository
 public class AdminMysqlImpl extends AbstractHibernateDAO<Admin> implements IAdminDao {
@@ -24,15 +26,15 @@ public class AdminMysqlImpl extends AbstractHibernateDAO<Admin> implements IAdmi
 
     @Override
     public boolean isExistByAdminName(String adminName) {
-        // TODO try to prevent sql injection
-        return getSession().createQuery("FROM Admin WHERE adminName = '" + adminName + "'").list().size() == 1;
+        Query hqlQuery = getSession().createQuery("FROM Admin WHERE adminName = ?1");
+        return hqlQuery.setString(1, adminName).list().size() == 1;
     }
 
     @Override
     public boolean isExistByAdminNameAndPassword(String adminName, String password) {
-        // TODO try to prevent sql injection
-        return getSession().createQuery("FROM Admin WHERE adminName = '" + adminName + "' AND password = '" + password + "'")
-                .list()
-                .size() == 1;
+        Query hqlQuery = getSession().createQuery("FROM Admin WHERE adminName = ?1 AND password = ?2");
+        hqlQuery.setString(1, adminName);
+        hqlQuery.setString(2, password);
+        return hqlQuery.list().size() == 1;
     }
 }

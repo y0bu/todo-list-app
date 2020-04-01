@@ -1,6 +1,7 @@
 package com.yoav.todolist.dao;
 
 import com.yoav.todolist.models.Account;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,36 +20,23 @@ public class AccountMysqlImpl extends AbstractHibernateDAO<Account> implements I
 
     @Override
     public boolean isExistByUsernameAndPassword(String username, String password) {
-        // TODO try to block SQL Injection
-        List<Account> accounts = getSession().createQuery(
-                "FROM Account WHERE" +
-                " username = " +
-                "'" + username + "'" +
-                " AND password = " +
-                "'" + password + "'")
-                .list();
-        return accounts.size() == 1;
+        Query hqlQuery = getSession().createQuery("FROM Account WHERE username = ?1 AND password = ?2");
+        hqlQuery.setString(1, username);
+        hqlQuery.setString(2, password);
+        return hqlQuery.list().size() == 1;
     }
 
     @Override
     public boolean isExistByUsername(String username) {
-        // TODO try to block SQL Injection
-        List<Account> accounts = getSession().createQuery(
-                "FROM Account WHERE" +
-                   " username = " +
-                   "'" + username + "'")
-                   .list();
-        return accounts.size() == 1;
+        Query hqlQuery = getSession().createQuery("FROM Account WHERE username = ?1");
+        return hqlQuery.setString(1, username).list().size() == 1;
     }
 
     @Override
     public Account findByUsername(String username) {
-        List<Account> accounts = getSession().createQuery(
-                "FROM Account WHERE" +
-                " username = " +
-                "'" + username + "'")
-                .list();
-        return accounts.get(0);
+        Query hqlQuery = getSession().createQuery("FROM Account WHERE username = ?1");
+        hqlQuery.setString(1, username);
+        return (Account) hqlQuery.list().get(0);
     }
 
     @Override
@@ -58,6 +46,6 @@ public class AccountMysqlImpl extends AbstractHibernateDAO<Account> implements I
 
     @Override
     public List<Account> findAll() {
-        return getSession().createQuery("FROM Account").list();
+        return getAll();
     }
 }
