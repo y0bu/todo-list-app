@@ -63,7 +63,7 @@ public class DashboardController {
 
     @RequestMapping(value = "/dashboard", method = RequestMethod.POST, params = "addTask")
     public String postDashboardAddTask(@RequestParam String addTask, HttpSession session) {
-        if (addTask.trim().equals("")) {
+        if (addTask.trim().equals("") || addTask.length() > 25) {
             return "redirect:/dashboard";
         }
         Task addedTask = new Task(addTask);
