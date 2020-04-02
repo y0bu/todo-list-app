@@ -52,6 +52,7 @@ public class LoginController {
             @RequestParam String username,
             @RequestParam String password,
             HttpServletResponse response,
+            HttpSession session,
             Model model) {
 
         if (accountService.isExistByUsernameAndPassword(username, password)) {
@@ -61,6 +62,7 @@ public class LoginController {
             cookie.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
             cookie.setPath("/"); // global cookie accessible every where
             response.addCookie(cookie);
+            session.setAttribute("username", username);
             return "redirect:/dashboard";
         } else {
             model.addAttribute("alert", "not the correct username or/and password");
