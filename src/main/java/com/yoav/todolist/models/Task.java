@@ -1,6 +1,7 @@
 package com.yoav.todolist.models;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "tasks")
@@ -18,11 +19,17 @@ public class Task {
     @JoinColumn(name="account_id", nullable=false)
     private Account account;
 
+    @Temporal(TemporalType.DATE)
+    @Column(name = "date_of_creation_task")
+    private Date date;
+
     public Task(String task) {
+        this.date = new Date();
         this.task = task;
     }
 
     public Task() {
+        this.date = new Date();
     }
 
     public Account getAccount() {
@@ -47,6 +54,14 @@ public class Task {
 
     public void setTask(String task) {
         this.task = task;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override

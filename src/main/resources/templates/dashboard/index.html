@@ -4,6 +4,13 @@
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<style>
+		  @media screen and (max-width: 600px) {
+				.appearIfItsNotMobile{
+					visibility: hidden;
+				}
+		}
+		</style>
 	</head>
 	<body>
 		<div class="container">
@@ -31,7 +38,7 @@
 															<p style="font-weight: 900;"><!--ID--></p>
 														</div>
 														<div class="widget-content-left flex2">
-															<div class="widget-heading"><td th:text="${task.task}"></td></div>
+															<div class="widget-heading"><span th:text="${task.task}"></span><p class="appearIfItsNotMobile" style="display: inline;"> | </p><div class="appearIfItsNotMobile" style="display: inline;"><span th:text="${task.date}"></span></div></div>
 														</div>
 														<div class="widget-content-right"> </button> <button class="border-0 btn-transition btn btn-outline-danger" name="delete" th:attr="value = ${task.id}" form="main"> <i class="fa fa-trash"></i> </button> </div>
 													</div>
