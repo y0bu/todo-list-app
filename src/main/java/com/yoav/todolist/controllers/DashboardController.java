@@ -4,18 +4,18 @@ import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Task;
 import com.yoav.todolist.service.AccountService;
 import com.yoav.todolist.service.TaskService;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
-import java.util.List;
 
 @Controller
 public class DashboardController {
@@ -35,11 +35,18 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
-    public String getDashboard(Model model, HttpSession session) {
+    public String getDashboard(Model model, HttpSession session, @CookieValue(value = "username", defaultValue = "notSetCookie") String username) {
+        if (!(username.equals("notSetCookie"))) {
+            Account thisAccount = accountService.findByUsername(username);
+            model.addAttribute("tasks", thisAccount.getTasks());
+            return "dashboard/index";
+        }
+
         String usernameOfLoggedUser = (String)session.getAttribute("username");
         if (usernameOfLoggedUser == null) {
             return "redirect:/";
         }
+
         Account thisAccount = accountService.findByUsername(usernameOfLoggedUser);
         model.addAttribute("tasks", thisAccount.getTasks());
         return "dashboard/index";
@@ -67,7 +74,16 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/dashboard", method = RequestMethod.POST, params = "logout")
-    public String postDashboardLogout(HttpSession session) {
+    public String postDashboardLogout(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+        for (Cookie cookie : request.getCookies()) {
+            if (cookie.getName().equals("username")) {
+                cookie.setMaxAge(0);
+                cookie.setValue(null);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+            }
+        }
+
         session.removeAttribute("username");
         return "redirect:/";
     }
