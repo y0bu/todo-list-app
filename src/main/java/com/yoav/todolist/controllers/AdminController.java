@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 
 /*
-* admin feature is medium size feature and it have the following operation:
+* admin feature have the following operation:
 *     1) delete account
 *     2) delete task with specifying username
 *     3) see all the accounts and their password
