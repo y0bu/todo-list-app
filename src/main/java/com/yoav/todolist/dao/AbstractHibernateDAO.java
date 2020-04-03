@@ -6,10 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+/**
+ * this class is simply but implementation of hibernate CRUD operations
+ * **/
 public abstract class AbstractHibernateDAO<T> {
 
     private Class<T> ourClass;
 
+    /**
+     * @implNote all the extends class that inherent this abstract class should set the class in the constructor
+     * @see AccountMysqlImpl for example
+     * **/
     public void setOurClass(Class<T> ourClass) {
         this.ourClass = ourClass;
     }
