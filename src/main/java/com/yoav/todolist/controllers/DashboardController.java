@@ -84,7 +84,7 @@ public class DashboardController {
         // with inspect element and delete other tasks
         Account accountThatWantToDeleteTaskById = accountService.findByUsername((String) session.getAttribute("username"));
         Task taskWantedToDelete = taskService.getById(Integer.parseInt(delete));
-        if (accountThatWantToDeleteTaskById.getTasks().contains(taskWantedToDelete)) return "unauthorized";
+        if (!(accountThatWantToDeleteTaskById.getTasks().contains(taskWantedToDelete))) return "unauthorized";
 
         // delete task
         int idOfDeletingTask = Integer.parseInt(delete);
