@@ -44,7 +44,4 @@ public class AccountService {
         return accountDao.findAll();
     }
 
-    public Account findById(int id) {
-        return accountDao.findById(id);
-    }
 }
