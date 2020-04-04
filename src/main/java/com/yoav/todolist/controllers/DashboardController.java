@@ -74,15 +74,24 @@ public class DashboardController {
      * @param delete is a id of task in string format
      * @param session is for checking whether the user is logged in or not and if the task he want to
      * delete is belong to the user
+     * @param username is for fetching cookie username account that logged in with the feature "remember me" and want to delete task
      * @return redirect to the to-do list tasks after deleting the task
      * **/
     @RequestMapping(value = "/dashboard", method = RequestMethod.POST, params = "delete")
-    public String postDashboardRemoveTask(@RequestParam String delete, HttpSession session) {
-        if (session.getAttribute("username") == null) return "redirect:/";
+    public String postDashboardRemoveTask(@RequestParam String delete, HttpSession session, @CookieValue(value = "username", defaultValue = "notSetCookie") String username) {
+
+        String usernameOfAccountWantToDeleteTask;
+
+        if (!(username.equals("notSetCookie"))) { // if it use cookie
+            usernameOfAccountWantToDeleteTask = username;
+        } else { // if it use session cookie
+            if (session.getAttribute("username") == null) return "redirect:/";
+            usernameOfAccountWantToDeleteTask = (String) session.getAttribute("username");
+        }
 
         // check if user that want to delete task is actually deleting one of his tasks because hacker can change the id
         // with inspect element and delete other tasks
-        Account accountThatWantToDeleteTaskById = accountService.findByUsername((String) session.getAttribute("username"));
+        Account accountThatWantToDeleteTaskById = accountService.findByUsername(usernameOfAccountWantToDeleteTask);
         Task taskWantedToDelete = taskService.getById(Integer.parseInt(delete));
         if (!(accountThatWantToDeleteTaskById.getTasks().contains(taskWantedToDelete))) return "unauthorized";
 
@@ -95,19 +104,27 @@ public class DashboardController {
     /**
      * @param addTask is the actual task that user want to add
      * @param session is for getting the username because to add a task we need the account that want to add task
+     * @param username is for fetching cookie username account that logged in with the feature "remember me" and want to add task
      * @return redirect back to the dashboard after adding a task or if the task is not valid for insertion redirect without
      * adding
      * **/
     @RequestMapping(value = "/dashboard", method = RequestMethod.POST, params = "addTask")
-    public String postDashboardAddTask(@RequestParam String addTask, HttpSession session) {
+    public String postDashboardAddTask(@RequestParam String addTask, HttpSession session, @CookieValue(value = "username", defaultValue = "notSetCookie") String username) {
 
         // user not allowed to add task length more then 25 characters and not allowed to add empty task
         if (addTask.trim().equals("") || addTask.length() > 25) return "redirect:/dashboard";
 
+        String usernameOfAccountWantToAddTask;
+
+        if (!(username.equals("notSetCookie"))) { // if it use cookie
+            usernameOfAccountWantToAddTask = username;
+        } else { // if it use session cookie
+            usernameOfAccountWantToAddTask = (String)session.getAttribute("username");
+        }
+
         // adding the task
         Task addedTask = new Task(addTask);
-        String usernameOfLoggedUser = (String)session.getAttribute("username");
-        Account thisAccount = accountService.findByUsername(usernameOfLoggedUser);
+        Account thisAccount = accountService.findByUsername(usernameOfAccountWantToAddTask);
         taskService.add(addedTask, thisAccount);
 
         return "redirect:/dashboard";
