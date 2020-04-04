@@ -40,11 +40,6 @@ public class AccountMysqlImpl extends AbstractHibernateDAO<Account> implements I
     }
 
     @Override
-    public Account findById(int id) {
-        return getById(id);
-    }
-
-    @Override
     public List<Account> findAll() {
         return getAll();
     }
