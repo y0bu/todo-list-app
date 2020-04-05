@@ -1,10 +1,5 @@
 package com.yoav.todolist.models;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +27,9 @@ public class Account {
         this.password = password;
     }
 
+    public Account() {
+    }
+
     public void removeTask(Task task) {
         task.setAccount(null);
         tasks.remove(task);
@@ -49,9 +47,6 @@ public class Account {
     public void setTasks(List<Task> tasks) {
         tasks.forEach(i -> i.setAccount(this));
         this.tasks = tasks;
-    }
-
-    public Account() {
     }
 
     public int getId() {
