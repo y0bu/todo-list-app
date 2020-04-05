@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+    <div class="container">
+        <form id="goBack" method="get" action="/">
+            <button class="btn btn-primary btn-md" form="goBack">GO Home</button>
+        </form>
+        <form id="createAdmin" method="get" action="/admin/add">
+            <button class="btn btn-success btn-md" form="createAdmin">Create New Admin</button>
+        </form>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">password</th>
+                </tr>
+            </thead>
+            <tbody>
+                <form action="/admin" method="post" id="mainForm">
+                    <tr th:each="account : ${accounts}">
+                        <td><button type="submit" formmethod="get" th:attr="formaction = ${urlToRedirect} + ${account.username}" class="btn btn-secondary btn-sm">Manage Tasks</button>
+                            <button type="submit" name="deleteAccount" form="mainForm" th:attr="value = ${account.id}" class="btn btn-danger btn-sm">Delete Account</button></td>
+                        <td th:text="${account.id}"></td>
+                        <td th:text="${account.username}"></td>
+                        <td th:text="${account.password}"></td>
+                    </tr>
+                </form>
+            </tbody>
+        </table>
+    </div>
+
+    </body>
+</html>

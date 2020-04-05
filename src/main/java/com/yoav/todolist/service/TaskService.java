@@ -27,4 +27,8 @@ public class TaskService {
     public void delete(int id) {
         taskDao.deleteById(id);
     }
+
+    public Task getById(int id) {
+        return taskDao.getById(id);
+    }
 }

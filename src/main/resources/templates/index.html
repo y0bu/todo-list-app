@@ -18,6 +18,15 @@
     <link href="https://getbootstrap.com/docs/4.0/examples/cover/cover.css" rel="stylesheet">
 
     <link href="../static/index.css" th:href="@{/index.css}" rel="stylesheet"/>
+
+    <style>
+      @media screen and (max-width: 600px) {
+            .buttonLowerABitWhenMobileView{
+                top: 7px;
+                position: relative;
+            }
+        }
+    </style>
   </head>
 
   <body class="text-center">
@@ -31,17 +40,17 @@
             <a class="nav-link" href="/login">Log in</a>
             <a class="nav-link" href="/features">Features</a>
             <a class="nav-link" href="/api/doc">API</a>
+            <a class="nav-link" href="/admin/login">Admin?</a>
           </nav>
         </div>
       </header>
 
       <main role="main" class="inner cover">
         <h1 class="cover-heading">The Best List Task Ever</h1>
-        <p class="lead" style="font-weight: 900;">our goal is to make your more orgnized and more productive then ever.</p>
+        <p class="lead" style="font-weight: 900;">our goal is to make your more organized and more productive then ever.</p>
         <p class="lead">
-        <p class="lead" style="font-weight: 900;"><a href="/signup" class="btn btn-lg btn-secondary">Sign Up</a> OR <button form="demoUserRedirect" class="btn btn-lg btn-secondary" name="demoUser" type="submit">Try It Right Away</button></p>
-          <a href="/login" class=""><p>i already have user</a></p>
-        </p>
+        <p class="lead" style="font-weight: 900;"><a href="/signup" class="btn btn-lg btn-secondary">Sign Up</a> OR <button form="demoUserRedirect" class="buttonLowerABitWhenMobileView btn btn-lg btn-secondary" name="demoUser" type="submit">Try It Right Away</button></p>
+          <a href="/login" class=""><p>i already have user</a>
       </main>
 
       <footer class="mastfoot mt-auto">

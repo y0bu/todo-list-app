@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container">
+            <form id="goBack" method="get" action="/admin">
+                <button name="goBack" class="btn btn-primary btn-md" form="goBack">GO Back</button>
+            </form>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Task</th>
+                </tr>
+                </thead>
+                <tbody>
+                <form action="" method="post" id="mainForm">
+                    <tr th:each="task : ${tasks}">
+                        <td><button type="submit" name="deleteTask" form="mainForm" th:attr="value = ${task.id}" class="btn btn-danger btn-sm">Delete Task</button></td>
+                        <td th:text="${task.id}"></td>
+                        <td th:text="${task.task}"></td>
+                    </tr>
+                    <input type="hidden" name="accountId" th:attr="value = ${accountId}">
+                </form>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>
