@@ -23,7 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class SignupController {
 
     // for inserting account and for validate that user not using username that already exist
-    private AccountService accountService;
+    private final AccountService accountService;
 
     @Autowired // dependency injection for singleton pattern
     public SignupController(AccountService accountService) {

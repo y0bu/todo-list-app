@@ -21,7 +21,7 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class LoginController {
 
-    private AccountService accountService; // for login validation
+    private final AccountService accountService; // for login validation
 
     @Autowired // dependency injection for singleton pattern
     public LoginController(AccountService accountService) {

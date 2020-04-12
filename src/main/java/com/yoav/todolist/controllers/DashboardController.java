@@ -25,8 +25,8 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class DashboardController {
 
-    private AccountService accountService; // we use this service to just get all the task of a user that logged in
-    private TaskService taskService; // we use this service to remove and add tasks
+    private final AccountService accountService; // we use this service to just get all the task of a user that logged in
+    private final TaskService taskService; // we use this service to remove and add tasks
 
     @Autowired // dependency injection for a singleton pattern
     public DashboardController(AccountService accountService, TaskService taskService) {

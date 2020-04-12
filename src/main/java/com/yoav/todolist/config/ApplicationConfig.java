@@ -55,7 +55,7 @@ public class ApplicationConfig {
     /*
     * hibernate properties like auto creating database if not exist and more properties
     * */
-    private final Properties hibernateProperties() {
+    private Properties hibernateProperties() {
         Properties hibernateProperties = new Properties();       
         hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "update");
         hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");

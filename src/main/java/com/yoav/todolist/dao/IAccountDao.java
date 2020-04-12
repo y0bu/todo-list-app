@@ -47,4 +47,16 @@ public interface IAccountDao {
      * @see com.yoav.todolist.controllers.AdminController
      * **/
     List<Account> findAll();
+
+    /**
+     * is for deleting a account in the api feature
+     * @see com.yoav.todolist.controllers.api.AccountsController
+     * **/
+    void delete(Account account);
+
+    /**
+     * this is for update account in the api feature
+     * @see com.yoav.todolist.controllers.api.AccountsController
+     * **/
+    Account update(Account account);
 }
