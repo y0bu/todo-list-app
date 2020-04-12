@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>RESTful api documentation</title>
+    </head>
+    <body>
+    <div class="container">
+        <div class="row">
+            <div class="col text-center">
+                <form id="goHome" action="/" method="get">
+                    <button type="submit" class="btn btn-primary" form="goHome">GO HOME</button>
+                </form>
+            </div>
+        </div>
+        <div class="jumbotron">
+            <h2>welcome to the RESTful API for the TODO list tasks application documentation</h2>
+            <h5>
+                the idea is simple we have account that have standart properties like username and password
+                and we have task every account can have any amount of tasks he/she wants
+                so it is many to one and one to many relationship
+            </h5>
+            <h6>note that all the request & responses are in json format</h6>
+        </div>
+        <div class="jumbotron">
+            <h3>the task object</h3>
+            <h5>
+                the properties:<br/>
+                    id (a integer id)<br/>
+                    task (a string containing the content of the task)<br/>
+                    date (a string that represent a date in format of(yyyy-mm-dd))
+            </h5>
+        </div>
+        <div class="jumbotron">
+            <h3>the account object</h3>
+            <h5>
+                the properties:<br/>
+                    tasks (a list of tasks objects)<br/>
+                    id (a integer id)<br/>
+                    password (a account password)<br/>
+                    username (a account username)
+            </h5>
+        </div>
+        <table class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">HTTP method</th>
+                <th scope="col">request path</th>
+                <th scope="col">description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>GET</td>
+                <td>/api/account/</td>
+                <td>to get all accounts information like usernames and passwords and tasks</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/api/account/{username}/</td>
+                <td>to get the account information by username passed in the path request "{username}"</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td>/api/account/</td>
+                <td>
+                    to add new account (the account passed with json format) if the username already exist it will return in the body of the response message
+                    for that("the username is already exist") else it will show the message ("user is inserted to the database successfully")
+                </td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td>/api/account/{username}/</td>
+                <td>
+                    it will simply delete the specified account with the passed parameter in the path request
+                    if the account deleted successfully it will show in the body response the following message ("the user deleted successfully")
+                    else it will display ("the user is not existing in the database")
+                </td>
+            </tr>
+            <tr>
+                <td>PUT</td>
+                <td>/api/account/{username}/</td>
+                <td>
+                    the request body takes a json object which is the new account
+                    the new account will be replaced with the account that have the username {"username"}
+                    if the username is exist in the database and the update is working as it should the response in the body will be
+                    ("user updated successfully")
+                    else it will be display ("username do not exist")
+                </td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/api/task/</td>
+                <td>
+                    return all the tasks
+                </td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/api/task/{username}/</td>
+                <td>
+                    will return all the tasks that belong to the given username in the request path
+                    if the username do exsit it will return the tasks belong to the given username
+                    but
+                    if not so we will return nothing (null)
+                </td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td>/api/task/{username}/</td>
+                <td>
+                    it will take an json object of task object and it will add this new task and link the given username via request path to that given task object
+                    as usual if the username do exist it will add the task successfully and display to the body of the response ("task added successfully")
+                    else it will ("display username do not exist")
+                </td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td>/api/task/{username}/{serialNumberOfTask}/</td>
+                <td>
+                    this is not simple as the others but this is still simple to understand if we keep that simple
+                    what i mean by serial number of a task?
+                    when you get the all the tasks of a certain user via /api/task/{username}/ you get them in certain order right?
+                    so that order is the order number(the serial number of the task wanted to be removed)
+                    so with given serial number of a task and with given username of the account
+                    we simply remove one of {"username"} task
+                    as usual if the username do exist it will add the task successfully and display to the body of the response ("task deleted successfully")
+                    else it will ("display username do not exist")
+                </td>
+            </tr>
+            <tr>
+                <td>PUT</td>
+                <td>/api/task/{username}/</td>
+                <td>
+                    this request is getting list of tasks in json format and what the request does
+                    is to just replace the old list of tasks belong to {"username"} with the given list of tasks
+                    as usual if the username do exist it will add the task successfully and display to the body of the response ("tasks updated successfully")
+                    else it will ("display username do not exist")
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    </body>
+</html>
