@@ -14,7 +14,7 @@ import java.util.List;
 @Transactional
 public class TaskService {
 
-    private ITaskDao taskDao;
+    private final ITaskDao taskDao;
 
     @Autowired
     public TaskService(@Qualifier("taskMysqlImpl") ITaskDao taskDao) {

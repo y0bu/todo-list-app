@@ -27,9 +27,9 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class AdminController {
 
-    private TaskService taskService; // for deleting task operation
-    private AccountService accountService; // for seeing all the task of account and deleting account
-    private AdminService adminService; // for creating account and logging validation login
+    private final TaskService taskService; // for deleting task operation
+    private final AccountService accountService; // for seeing all the task of account and deleting account
+    private final AdminService adminService; // for creating account and logging validation login
 
     @Autowired // dependency injection on the services for singleton purposes
     public AdminController(TaskService taskService, AccountService accountService, AdminService adminService) {

@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 @Transactional
 public class AdminService {
 
-    private IAdminDao adminDao;
+    private final IAdminDao adminDao;
 
     @Autowired
     public AdminService(@Qualifier("adminMysqlImpl") IAdminDao adminDao) {

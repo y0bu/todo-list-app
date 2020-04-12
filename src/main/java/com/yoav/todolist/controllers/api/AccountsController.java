@@ -15,8 +15,8 @@ import java.util.List;
 @RestController
 public class AccountsController {
 
-    private AccountService accountService;
-    private TaskService taskService;
+    private final AccountService accountService;
+    private final TaskService taskService;
 
     @Autowired
     public AccountsController(AccountService accountService, TaskService taskService) {

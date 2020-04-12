@@ -1,6 +1,5 @@
 package com.yoav.todolist.dao;
 
-import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Admin;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
