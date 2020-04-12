@@ -1,5 +1,7 @@
 package com.yoav.todolist.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -15,8 +17,9 @@ public class Task {
     @Column(name = "task")
     private String task;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name="account_id", nullable=false)
+    @JsonIgnore
     private Account account;
 
     @Temporal(TemporalType.DATE)
@@ -65,10 +68,8 @@ public class Task {
     }
 
     @Override
-    public boolean equals(Object o) {
-        Task theEquator = (Task) o;
-        if (theEquator.getId() == this.id) return true;
-        else return false;
+    public boolean equals(Object task) {
+        return ((Task)task).getId() == this.id;
     }
 
     @Override

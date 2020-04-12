@@ -14,6 +14,16 @@ public class TaskMysqlImpl extends AbstractHibernateDAO<Task> implements ITaskDa
     @Override
     public void add(Task task, Account account) {
         task.setAccount(account);
-        getSession().persist(task);
+        update(task);
+    }
+
+    @Override
+    public void deleteAllByAccountId(int id) {
+        getSession().createQuery("DELETE FROM Task WHERE account = " + id).executeUpdate();
+    }
+
+    @Override
+    public void deleteById(int id) {
+        getSession().createQuery("DELETE FROM Task WHERE id = " + id).executeUpdate();
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 @Transactional
 public class AccountService {
 
-    private IAccountDao accountDao;
+    private final IAccountDao accountDao;
 
     @Autowired
     public AccountService(@Qualifier("accountMysqlImpl") IAccountDao accountDao) {
@@ -44,4 +44,11 @@ public class AccountService {
         return accountDao.findAll();
     }
 
+    public void delete(Account account) {
+        accountDao.delete(account);
+    }
+
+    public Account update(Account account) {
+        return accountDao.update(account);
+    }
 }

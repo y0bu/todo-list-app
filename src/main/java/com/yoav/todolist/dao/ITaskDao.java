@@ -4,6 +4,8 @@ import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Task;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public interface ITaskDao {
 
@@ -26,4 +28,20 @@ public interface ITaskDao {
      * @see com.yoav.todolist.controllers.DashboardController
      * **/
     Task getById(int id);
+
+    /**
+     * get all the tasks used in the api
+     * @see com.yoav.todolist.controllers.api.TasksController
+     * **/
+    List<Task> getAll();
+
+    /**
+     * is for deleting all the tasks before updating because hibernate is shit and do not want to update my tasks
+     * and now in clam mood: hibernate not updating correctly the tasks it just add tasks but not removing the unwanted
+     * tasks
+     * so we do the hard work and removing the task that hibernate don't want
+     * @see TaskMysqlImpl
+     * @see com.yoav.todolist.controllers.api.TasksController
+     * **/
+    void deleteAllByAccountId(int id);
 }

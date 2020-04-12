@@ -19,7 +19,7 @@ public class Account {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
 
     public Account(String username, String password) {
@@ -71,6 +71,11 @@ public class Account {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object account) {
+        return ((Account)account).getUsername().equals(this.username);
     }
 
     @Override
