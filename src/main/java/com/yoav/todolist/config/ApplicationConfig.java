@@ -45,7 +45,7 @@ public class ApplicationConfig {
     /*
     * i don't really know what this function is really
     * */
-    @Bean    
+    @Bean(name = {"transactionManager", "hibernateTransactionManager", "PlatformTransactionManager"})
     public PlatformTransactionManager hibernateTransactionManager() {
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();
         transactionManager.setSessionFactory(sessionFactory().getObject());        

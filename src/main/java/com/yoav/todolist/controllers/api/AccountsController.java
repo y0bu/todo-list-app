@@ -44,7 +44,7 @@ public class AccountsController {
     public Account getCertainAccount(@PathVariable String username) {
         try {
             return accountService.findByUsername(username);
-        } catch (IndexOutOfBoundsException e) { // if there is no existing username in the database
+        } catch (IndexOutOfBoundsException | NullPointerException e) { // if there is no existing username in the database
             e.printStackTrace();
             return null;
         }
@@ -77,7 +77,7 @@ public class AccountsController {
             Account accountWantedToBeDeleted = accountService.findByUsername(username);
             accountService.delete(accountWantedToBeDeleted);
             return new ResponseEntity("the user deleted successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             return new ResponseEntity("the user is not existing in the database", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -102,7 +102,7 @@ public class AccountsController {
             taskService.deleteAllByAccountId(accountWantedToBeUpdated.getId());
             accountService.update(account);
             return new ResponseEntity("user updated successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             e.printStackTrace();
             return new ResponseEntity("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }

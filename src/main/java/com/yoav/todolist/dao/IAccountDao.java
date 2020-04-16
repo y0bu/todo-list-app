@@ -4,6 +4,7 @@ import com.yoav.todolist.models.Account;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public interface IAccountDao {
@@ -40,7 +41,7 @@ public interface IAccountDao {
      * for getting all the account tasks
      * @see com.yoav.todolist.controllers.AdminController
      * **/
-    Account findByUsername(String username);
+    Optional<Account> findByUsername(String username);
 
     /**
      * this is for getting all accounts in the admin main page

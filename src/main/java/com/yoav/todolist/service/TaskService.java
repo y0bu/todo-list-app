@@ -17,7 +17,7 @@ public class TaskService {
     private final ITaskDao taskDao;
 
     @Autowired
-    public TaskService(@Qualifier("taskMysqlImpl") ITaskDao taskDao) {
+    public TaskService(@Qualifier("taskRepository") ITaskDao taskDao) {
         this.taskDao = taskDao;
     }
 
@@ -30,7 +30,7 @@ public class TaskService {
     }
 
     public Task getById(int id) {
-        return taskDao.getById(id);
+        return taskDao.getById(id).orElseThrow(() -> new NullPointerException("not existing task id hence cant get task by id"));
     }
 
     public List<Task> getAll() {

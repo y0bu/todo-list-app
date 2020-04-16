@@ -46,7 +46,7 @@ public class TasksController {
         try {
             Account accountMadeRequestToGetAllHisTasks = accountService.findByUsername(username);
             return accountMadeRequestToGetAllHisTasks.getTasks();
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             e.printStackTrace();
             return null;
         }
@@ -66,7 +66,7 @@ public class TasksController {
             Account accountWantToAddTask = accountService.findByUsername(username);
             taskService.add(task, accountWantToAddTask);
             return new ResponseEntity("task added successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             e.printStackTrace();
             return new ResponseEntity("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
@@ -90,9 +90,9 @@ public class TasksController {
             Task deleteTask = tasks.get(taskNumberOrder-1); // -1 for getting actual index because its not passed as array index
             taskService.delete(deleteTask.getId());
             return new ResponseEntity("task deleted successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             e.printStackTrace();
-            return new ResponseEntity("username do not exist or task not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("username do not exist or task not exist or serial number of task not correct", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -110,7 +110,7 @@ public class TasksController {
             taskService.deleteAllByAccountId(accountToBeUpdated.getId());
             accountService.update(accountToBeUpdated);
             return new ResponseEntity("tasks updated successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             e.printStackTrace();
             System.out.println("problem");
             return new ResponseEntity("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);

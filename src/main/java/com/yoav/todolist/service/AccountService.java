@@ -16,7 +16,7 @@ public class AccountService {
     private final IAccountDao accountDao;
 
     @Autowired
-    public AccountService(@Qualifier("accountMysqlImpl") IAccountDao accountDao) {
+    public AccountService(@Qualifier("accountRepository") IAccountDao accountDao) {
         this.accountDao = accountDao;
     }
 
@@ -37,7 +37,7 @@ public class AccountService {
     }
 
     public Account findByUsername(String username) {
-        return accountDao.findByUsername(username);
+        return accountDao.findByUsername(username).orElseThrow(() -> new NullPointerException("there is not existing account with this username therefor can find account by username"));
     }
 
     public List<Account> getAll() {
