@@ -16,7 +16,7 @@ public interface AccountRepository extends JpaRepository<Account, Integer>, IAcc
         saveAndFlush(account);
     }
 
-    @Query(value = "SELECT * FROM accounts WHERE accounts.username = ?1 AND accounts.username = ?2", nativeQuery = true)
+    @Query(value = "SELECT * FROM accounts WHERE accounts.username = ?1 AND accounts.password = ?2", nativeQuery = true)
     @Transactional
     Optional<Account> isExistByUsernameAndPasswordQuery(String username, String password);
 
