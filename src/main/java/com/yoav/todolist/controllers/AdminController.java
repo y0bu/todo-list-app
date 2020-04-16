@@ -36,7 +36,6 @@ public class AdminController {
         this.taskService = taskService;
         this.accountService = accountService;
         this.adminService = adminService;
-        adminService.checkIfBaseAdminAccountExist(); // change this shit move it to the repository layer or to the service layer
     }
 
     /*

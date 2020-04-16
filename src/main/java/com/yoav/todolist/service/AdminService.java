@@ -15,12 +15,11 @@ public class AdminService {
     private final IAdminDao adminDao;
 
     @Autowired
-    public AdminService(@Qualifier("adminMysqlImpl") IAdminDao adminDao) {
+    public AdminService(@Qualifier("adminRepository") IAdminDao adminDao) {
         this.adminDao = adminDao;
-    }
-
-    public void checkIfBaseAdminAccountExist() {
-        adminDao.checkIfBaseAdminAccountExist();
+        if (!(adminDao.IsBaseAdminAccountExist())) {
+            adminDao.add(new Admin("admin", "admin")); // if base admin account not exist
+        }
     }
 
     public void add(Admin admin) {

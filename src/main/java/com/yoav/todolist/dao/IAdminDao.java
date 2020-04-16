@@ -33,5 +33,5 @@ public interface IAdminDao {
      * be existed
      * @see com.yoav.todolist.controllers.AdminController
      * **/
-    void checkIfBaseAdminAccountExist();
+    boolean IsBaseAdminAccountExist();
 }
