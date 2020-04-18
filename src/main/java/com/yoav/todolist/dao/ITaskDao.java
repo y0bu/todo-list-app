@@ -44,4 +44,10 @@ public interface ITaskDao {
      * @see com.yoav.todolist.controllers.api.TasksController
      * **/
     void deleteAllByAccountId(int id);
+
+    /**
+     * WARNING!!!!!!
+     * @implNote USES ONLY IN INTEGRATION TESTING
+     * **/
+    void deleteAllInBatch();
 }

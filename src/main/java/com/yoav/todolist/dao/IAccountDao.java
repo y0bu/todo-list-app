@@ -60,4 +60,10 @@ public interface IAccountDao {
      * @see com.yoav.todolist.controllers.api.AccountsController
      * **/
     Account update(Account account);
+
+    /**
+     * WARNING!!!!!!
+     * @implNote USES ONLY IN INTEGRATION TESTING
+     * **/
+    void deleteAllInBatch();
 }

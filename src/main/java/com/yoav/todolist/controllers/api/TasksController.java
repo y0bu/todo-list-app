@@ -107,7 +107,6 @@ public class TasksController {
         try {
             Account accountToBeUpdated = accountService.findByUsername(username);
             accountToBeUpdated.setTasks(tasks);
-            taskService.deleteAllByAccountId(accountToBeUpdated.getId());
             accountService.update(accountToBeUpdated);
             return new ResponseEntity("tasks updated successfully", new HttpHeaders(), HttpStatus.OK);
         } catch (IndexOutOfBoundsException | NullPointerException e) {

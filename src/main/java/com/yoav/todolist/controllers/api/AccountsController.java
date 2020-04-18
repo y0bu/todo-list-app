@@ -99,7 +99,6 @@ public class AccountsController {
         try {
             Account accountWantedToBeUpdated = accountService.findByUsername(username);
             account.setId(accountWantedToBeUpdated.getId());
-            taskService.deleteAllByAccountId(accountWantedToBeUpdated.getId());
             accountService.update(account);
             return new ResponseEntity("user updated successfully", new HttpHeaders(), HttpStatus.OK);
         } catch (IndexOutOfBoundsException | NullPointerException e) {

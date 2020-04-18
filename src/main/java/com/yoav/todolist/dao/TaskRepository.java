@@ -16,8 +16,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer>, ITaskDao {
 
     @Override
     default void add(Task task, Account account) {
-        task.setAccount(account);
-        saveAndFlush(task);
+        account.addTask(task);
     }
 
     @Override
