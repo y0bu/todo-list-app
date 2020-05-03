@@ -25,8 +25,8 @@ public class TaskService {
         taskDao.add(task, account);
     }
 
-    public void delete(int id) {
-        taskDao.deleteById(id);
+    public void delete(Task task, Account account) {
+        taskDao.delete(task, account);
     }
 
     public Task getById(int id) {
@@ -37,8 +37,8 @@ public class TaskService {
         return taskDao.getAll();
     }
 
-    public void deleteAllByAccountId(int id) {
-        taskDao.deleteAllByAccountId(id);
+    public void deleteById(int id) {
+        taskDao.deleteById(id);
     }
 
 }

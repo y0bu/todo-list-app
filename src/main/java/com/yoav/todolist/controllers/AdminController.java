@@ -132,7 +132,7 @@ public class AdminController {
 
         if (session.getAttribute("isAdmin") == null) return "unauthorized";
         int idOfDeletingTask = Integer.parseInt(deleteTask);
-        taskService.delete(idOfDeletingTask);
+        taskService.deleteById(idOfDeletingTask);
         return "redirect:/admin/" + usernameOfAccount; // redirecting back to the list of tasks of the specifying username
     }
 

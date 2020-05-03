@@ -65,10 +65,10 @@ class TaskRepositoryTest {
         * is not deleting the rest of the unwanted tasks is leave them not deleted while we do not want them
         * so in here i am deleting all the tasks belong to specifying user for deleting unwanted tasks
         * */
-        taskDao.deleteAllByAccountId(account.getId());
+        //taskDao.deleteAllByAccountId(account.getId());
 
         account.setTasks(newTasks);
-        accountDao.update(account);
+        accountDao.add(account);
 
         // asserting that all the tasks are updated
         account = accountDao.findByUsername("admin").orElse(null);

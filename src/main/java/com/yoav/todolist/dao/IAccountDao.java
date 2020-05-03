@@ -56,14 +56,9 @@ public interface IAccountDao {
     void delete(Account account);
 
     /**
-     * this is for update account in the api feature
-     * @see com.yoav.todolist.controllers.api.AccountsController
-     * **/
-    Account update(Account account);
-
-    /**
      * WARNING!!!!!!
      * @implNote USES ONLY IN INTEGRATION TESTING
      * **/
     void deleteAllInBatch();
+
 }

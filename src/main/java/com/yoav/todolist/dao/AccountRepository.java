@@ -30,11 +30,6 @@ public interface AccountRepository extends JpaRepository<Account, Integer>, IAcc
     Optional<Account> findByUsername(String username);
 
     @Override
-    default Account update(Account account) {
-        return save(account);
-    }
-
-    @Override
     default boolean isExistByUsernameAndPassword(String username, String password) {
         Optional<Account> account = isExistByUsernameAndPasswordQuery(username, password);
         return account.isPresent();

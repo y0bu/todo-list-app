@@ -17,8 +17,7 @@ public class Task {
     @Column(name = "task")
     private String task;
 
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    @JoinColumn(name="account_id", nullable=false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Account account;
 
@@ -79,4 +78,10 @@ public class Task {
                 ", task='" + task + '\'' +
                 '}';
     }
+
+    @Override
+    public int hashCode() {
+        return 31;
+    }
+
 }

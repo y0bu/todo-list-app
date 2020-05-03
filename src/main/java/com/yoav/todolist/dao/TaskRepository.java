@@ -15,6 +15,11 @@ import java.util.Optional;
 public interface TaskRepository extends JpaRepository<Task, Integer>, ITaskDao {
 
     @Override
+    default void delete(Task task, Account account) {
+        account.removeTask(task);
+    }
+
+    @Override
     default void add(Task task, Account account) {
         account.addTask(task);
     }
@@ -29,10 +34,10 @@ public interface TaskRepository extends JpaRepository<Task, Integer>, ITaskDao {
         return findAll();
     }
 
-    @Query(value = "DELETE FROM tasks WHERE tasks.account_id = ?1", nativeQuery = true)
+    @Query(value = "DELETE FROM tasks WHERE tasks.id = ?1", nativeQuery = true)
     @Transactional
     @Modifying
     @Override
-    void deleteAllByAccountId(int id);
+    void deleteById(int id);
 
 }

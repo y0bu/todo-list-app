@@ -1,7 +1,6 @@
 package com.yoav.todolist.service;
 
 import com.yoav.todolist.dao.IAccountDao;
-import com.yoav.todolist.dao.ITaskDao;
 import com.yoav.todolist.models.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,12 +14,10 @@ import java.util.List;
 public class AccountService {
 
     private final IAccountDao accountDao;
-    private final ITaskDao taskDao;
 
     @Autowired
-    public AccountService(@Qualifier("accountRepository") IAccountDao accountDao, @Qualifier("taskRepository") ITaskDao taskDao) {
+    public AccountService(@Qualifier("accountRepository") IAccountDao accountDao) {
         this.accountDao = accountDao;
-        this.taskDao = taskDao;
     }
 
     public boolean isExistByUsernameAndPassword(String username, String password) {
@@ -51,18 +48,8 @@ public class AccountService {
         accountDao.delete(account);
     }
 
-    public Account update(Account account) {
-
-
-        /*
-         * this method deleteAllByAccountId is deleting all the tasks belong to the username that we specifying
-         * we need this for updating tasks for that account the reason for deleting is hibernate/spring data jpa
-         * is not deleting the rest of the unwanted tasks is leave them not deleted while we do not want them
-         * so in here i am deleting all the tasks belong to specifying user for deleting unwanted tasks
-         * */
-        taskDao.deleteAllByAccountId(account.getId());
-
-
-        return accountDao.update(account);
+    public void update(Account account) {
+        accountDao.add(account);
     }
+
 }

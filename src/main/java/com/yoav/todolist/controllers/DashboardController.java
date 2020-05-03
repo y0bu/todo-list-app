@@ -96,8 +96,10 @@ public class DashboardController {
         if (!(accountThatWantToDeleteTaskById.getTasks().contains(taskWantedToDelete))) return "unauthorized";
 
         // delete task
-        int idOfDeletingTask = Integer.parseInt(delete);
-        taskService.delete(idOfDeletingTask);
+        taskService.delete(
+                taskWantedToDelete,
+                accountThatWantToDeleteTaskById
+        );
         return "redirect:/dashboard";
     }
 

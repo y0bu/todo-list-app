@@ -19,7 +19,11 @@ public class Account {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "account",
+            orphanRemoval = true,
+            cascade = CascadeType.ALL
+    )
     private List<Task> tasks = new ArrayList<>();
 
     public Account(String username, String password) {
@@ -31,13 +35,13 @@ public class Account {
     }
 
     public void removeTask(Task task) {
-        task.setAccount(null);
         tasks.remove(task);
+        task.setAccount(null);
     }
 
     public void addTask(Task task) {
-        task.setAccount(this);
         tasks.add(task);
+        task.setAccount(this);
     }
 
     public List<Task> getTasks() {
@@ -45,8 +49,13 @@ public class Account {
     }
 
     public void setTasks(List<Task> tasks) {
-        tasks.forEach(i -> i.setAccount(this));
-        this.tasks = tasks;
+        this.tasks.forEach(i -> i.setAccount(null));
+        this.tasks.clear();
+
+        tasks.forEach(i -> {
+            i.setAccount(this);
+            addTask(i);
+        });
     }
 
     public int getId() {

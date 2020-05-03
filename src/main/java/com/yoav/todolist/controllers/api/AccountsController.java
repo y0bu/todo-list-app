@@ -2,7 +2,6 @@ package com.yoav.todolist.controllers.api;
 
 import com.yoav.todolist.models.Account;
 import com.yoav.todolist.service.AccountService;
-import com.yoav.todolist.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,11 +19,9 @@ import java.util.List;
 public class AccountsController {
 
     private final AccountService accountService;
-    private final TaskService taskService;
 
     @Autowired // dependency injection of singleton pattern
-    public AccountsController(AccountService accountService, TaskService taskService) {
-        this.taskService = taskService;
+    public AccountsController(AccountService accountService) {
         this.accountService = accountService;
     }
 
@@ -58,12 +55,12 @@ public class AccountsController {
      * "user is inserted to the database successfully"
      * **/
     @PostMapping("/api/account")
-    public ResponseEntity addAccount(@Valid @RequestBody Account account) {
+    public ResponseEntity<String> addAccount(@Valid @RequestBody Account account) {
         if (accountService.isExistByUsername(account.getUsername())) {
-            return new ResponseEntity("the username is already exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("the username is already exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
         accountService.add(account);
-        return new ResponseEntity("user is inserted to the database successfully", new HttpHeaders(), HttpStatus.OK);
+        return new ResponseEntity<String>("user is inserted to the database successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     /**
@@ -72,13 +69,13 @@ public class AccountsController {
      * we returning "the user is not existing in the database" and we not deleting nothing
      * **/
     @DeleteMapping("/api/account/{username}")
-    public ResponseEntity deleteAccount(@PathVariable String username) {
+    public ResponseEntity<String> deleteAccount(@PathVariable String username) {
         try {
             Account accountWantedToBeDeleted = accountService.findByUsername(username);
             accountService.delete(accountWantedToBeDeleted);
-            return new ResponseEntity("the user deleted successfully", new HttpHeaders(), HttpStatus.OK);
+            return new ResponseEntity<String>("the user deleted successfully", new HttpHeaders(), HttpStatus.OK);
         } catch (IndexOutOfBoundsException | NullPointerException e) {
-            return new ResponseEntity("the user is not existing in the database", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("the user is not existing in the database", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -95,15 +92,15 @@ public class AccountsController {
      * @see com.yoav.todolist.dao.ITaskDao
      * **/
     @PutMapping("/api/account/{username}")
-    public ResponseEntity updateAccount(@Valid @RequestBody Account account, @PathVariable String username) {
+    public ResponseEntity<String> updateAccount(@Valid @RequestBody Account account, @PathVariable String username) {
         try {
             Account accountWantedToBeUpdated = accountService.findByUsername(username);
             account.setId(accountWantedToBeUpdated.getId());
             accountService.update(account);
-            return new ResponseEntity("user updated successfully", new HttpHeaders(), HttpStatus.OK);
+            return new ResponseEntity<String>("user updated successfully", new HttpHeaders(), HttpStatus.OK);
         } catch (IndexOutOfBoundsException | NullPointerException e) {
             e.printStackTrace();
-            return new ResponseEntity("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 }

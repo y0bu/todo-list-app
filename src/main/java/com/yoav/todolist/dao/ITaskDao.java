@@ -37,17 +37,14 @@ public interface ITaskDao {
     List<Task> getAll();
 
     /**
-     * is for deleting all the tasks before updating because hibernate is shit and do not want to update my tasks
-     * and now in clam mood: hibernate not updating correctly the tasks it just add tasks but not removing the unwanted
-     * tasks
-     * so we do the hard work and removing the task that hibernate don't want
-     * @see com.yoav.todolist.controllers.api.TasksController
-     * **/
-    void deleteAllByAccountId(int id);
-
-    /**
      * WARNING!!!!!!
      * @implNote USES ONLY IN INTEGRATION TESTING
      * **/
     void deleteAllInBatch();
+
+    /**
+     * to delete task
+     * **/
+    void delete(Task task, Account account);
+
 }
