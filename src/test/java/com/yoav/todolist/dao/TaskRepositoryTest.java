@@ -58,15 +58,6 @@ class TaskRepositoryTest {
         newTasks.add(new Task("java"));
         newTasks.add(new Task("hibernate spring boot"));
 
-        // here we deleting all the account tasks before inserting new ones
-        /*
-        * this method deleteAllByAccountId is deleting all the tasks belong to the username that we specifying
-        * we need this for updating tasks for that account the reason for deleting is hibernate/spring data jpa
-        * is not deleting the rest of the unwanted tasks is leave them not deleted while we do not want them
-        * so in here i am deleting all the tasks belong to specifying user for deleting unwanted tasks
-        * */
-        //taskDao.deleteAllByAccountId(account.getId());
-
         account.setTasks(newTasks);
         accountDao.add(account);
 
