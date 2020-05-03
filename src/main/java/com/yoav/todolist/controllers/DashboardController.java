@@ -121,6 +121,7 @@ public class DashboardController {
         if (!(username.equals("notSetCookie"))) { // if it use cookie
             usernameOfAccountWantToAddTask = username;
         } else { // if it use session cookie
+            if (session.getAttribute("username") == null) return "redirect:/";
             usernameOfAccountWantToAddTask = (String)session.getAttribute("username");
         }
 
