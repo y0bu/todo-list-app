@@ -38,6 +38,14 @@ public class DashboardControllerTest {
     @Qualifier("accountRepository")
     private IAccountDao accountDao;
 
+    private List<String> tasksToStringList(List<Task> tasks) {
+        List<String> tasksAsStrings = new ArrayList<>();
+        for (Task task : tasks) {
+            tasksAsStrings.add(task.getTask());
+        }
+        return tasksAsStrings;
+    }
+
     @Test
     public void getDashboardTest_whenThereIsCookie() throws Exception {
         Account account = new Account("yoav", "spring-boot");
@@ -182,6 +190,12 @@ public class DashboardControllerTest {
                                 "addTask",
                                 " ")).
                 andExpect(redirectedUrl("/dashboard"));
+
+        account = accountDao.findByUsername("some admin").orElse(new Account());
+        assertThat(account.getUsername()).isEqualTo("some admin");
+        account.getTasks().forEach(i -> {
+            assertThat(i.getTask()).isNotEqualTo(" ");
+        });
     }
 
     @Test
@@ -206,6 +220,12 @@ public class DashboardControllerTest {
                                 "addTask",
                                 "")).
                 andExpect(redirectedUrl("/dashboard"));
+
+        account = accountDao.findByUsername("some admin").orElse(new Account());
+        assertThat(account.getUsername()).isEqualTo("some admin");
+        account.getTasks().forEach(i -> {
+            assertThat(i.getTask()).isNotEqualTo("");
+        });
     }
 
     @Test
@@ -230,6 +250,12 @@ public class DashboardControllerTest {
                                 "addTask",
                                 "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")).
                 andExpect(redirectedUrl("/dashboard"));
+
+        account = accountDao.findByUsername("some admin").orElse(new Account());
+        assertThat(account.getUsername()).isEqualTo("some admin");
+        account.getTasks().forEach(i -> {
+            assertThat(i.getTask()).isNotEqualTo("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        });
     }
 
     @Test
@@ -264,6 +290,11 @@ public class DashboardControllerTest {
                                 "addTask",
                                 "this is a normal task")).
                 andExpect(redirectedUrl("/dashboard"));
+
+        account = accountDao.findByUsername("some admin").orElse(new Account());
+        assertThat(account.getUsername()).isEqualTo("some admin");
+        List<String> tasksOfAccount = tasksToStringList(account.getTasks());
+        assertThat(tasksOfAccount.contains("this is a normal task")).isTrue();
     }
 
     @Test
