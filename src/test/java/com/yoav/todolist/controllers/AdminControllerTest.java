@@ -17,6 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -43,6 +45,9 @@ public class AdminControllerTest {
     @Autowired
     @Qualifier("taskRepository")
     private ITaskDao taskDao;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
     public void postValidateLoginAdminTest_whenAdminNameAndPasswordAreCorrect() throws Exception {
@@ -196,8 +201,9 @@ public class AdminControllerTest {
                 andExpect(status().is3xxRedirection()).
                 andExpect(redirectedUrl("/admin/yoav"));
 
-        // TODO: uncomment this line when you fixed the bug
-        // assertThat(accountDao.findByUsername("yoav").orElse(new Account()).getTasks()).hasSize(1);
+        entityManager.flush();
+        entityManager.clear();
+        assertThat(accountDao.findByUsername("yoav").orElse(new Account()).getTasks()).hasSize(1);
     }
 
     @Test
