@@ -10,7 +10,7 @@ public class PasswordUtils {
      *                   if the password is strong the method
      * @return empty string
      * **/
-    public static String chooseAlertWeakPassword(String password) {
+    public static String chooseAlertForWeakPassword(String password) {
         if (password.length() < 8) {
             return "you need at least 8 character in the password";
         } else if (password.length() > 200) {

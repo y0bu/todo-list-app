@@ -23,7 +23,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class SignupController {
 
-    // for inserting account and for validate that user not using username that already exist
     private final AccountService accountService;
 
     @Autowired // dependency injection for singleton pattern
@@ -64,9 +63,9 @@ public class SignupController {
         // this string is should contain a note message about the weakness of the password for example
         // "you need at least one special character" etc etc...
         // the string gonna be empty when the password is strong enough
-        String passwordAlert = PasswordUtils.chooseAlertWeakPassword(password);
+        String passwordAlert = PasswordUtils.chooseAlertForWeakPassword(password);
 
-        if ( ! password.equals(passwordAgain)) {
+        if ( ! password.equals(passwordAgain) ) {
             model.addAttribute("alert", "password you typed is not the same as you typed above");
             return "signup/index";
         }
@@ -75,13 +74,13 @@ public class SignupController {
             return "signup/index";
         }
         else {
-            if ( ! accountService.add(new Account(username, password))) { // if the username is already have been taken
-                model.addAttribute("alert", "the username is already have been taken");
-                return "signup/index";
+            if ( accountService.add( new Account(username, password) ) ) { // if everything is fine
+                attributes.addFlashAttribute("alert", "you signed up successfully now you can log in");
+                return "redirect:/login";
             }
-            // if everything is fine
-            attributes.addFlashAttribute("alert", "you signed up successfully now you can log in");
-            return "redirect:/login";
+            // if the username is already have been taken
+            model.addAttribute("alert", "the username is already have been taken");
+            return "signup/index";
         }
     }
 
