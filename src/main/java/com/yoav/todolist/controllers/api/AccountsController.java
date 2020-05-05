@@ -38,12 +38,11 @@ public class AccountsController {
      * @return a specified account information
      * **/
     @GetMapping("/api/account/{username}")
-    public Account getCertainAccount(@PathVariable String username) {
+    public ResponseEntity<Account> getCertainAccount(@PathVariable String username) {
         try {
-            return accountService.findByUsername(username);
+            return new ResponseEntity<>(accountService.findByUsername(username), new HttpHeaders(), HttpStatus.OK);
         } catch (IndexOutOfBoundsException | NullPointerException e) { // if there is no existing username in the database
-            e.printStackTrace();
-            return null;
+            return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -70,9 +69,9 @@ public class AccountsController {
         try {
             Account accountWantedToBeDeleted = accountService.findByUsername(username);
             accountService.delete(accountWantedToBeDeleted);
-            return new ResponseEntity<String>("the user deleted successfully", new HttpHeaders(), HttpStatus.OK);
+            return new ResponseEntity<>("the user deleted successfully", new HttpHeaders(), HttpStatus.OK);
         } catch (IndexOutOfBoundsException | NullPointerException e) {
-            return new ResponseEntity<String>("the user is not existing in the database", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("the user is not existing in the database", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -94,10 +93,9 @@ public class AccountsController {
             Account accountWantedToBeUpdated = accountService.findByUsername(username);
             account.setId(accountWantedToBeUpdated.getId());
             accountService.update(account);
-            return new ResponseEntity<String>("user updated successfully", new HttpHeaders(), HttpStatus.OK);
+            return new ResponseEntity<>("user updated successfully", new HttpHeaders(), HttpStatus.OK);
         } catch (IndexOutOfBoundsException | NullPointerException e) {
-            e.printStackTrace();
-            return new ResponseEntity<String>("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 }

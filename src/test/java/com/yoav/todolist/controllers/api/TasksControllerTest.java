@@ -92,7 +92,7 @@ public class TasksControllerTest {
     public void getAllTasksBelongToSpecifiedUsernameTest_simpleScenarioWhereUserIsNotExist() throws Exception {
         mockMvc.
             perform(get("/api/task/notExist")).
-                andExpect(status().isOk()).
+                andExpect(status().isBadRequest()).
                 andExpect(mvcResult -> {
                     assertThat(mvcResult.getResponse().getContentLength()).isEqualTo(0);
                 });

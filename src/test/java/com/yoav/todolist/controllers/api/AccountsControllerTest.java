@@ -96,7 +96,8 @@ public class AccountsControllerTest {
         mockMvc.
                 perform(get("/api/account/justUserThatNotExist")).
                 andExpect(mvcResult ->
-                        assertThat(mvcResult.getResponse().getContentLength()).isEqualTo(0)); // expecting null
+                        assertThat(mvcResult.getResponse().getContentLength()).isEqualTo(0)). // expecting null
+                andExpect(status().isBadRequest());
     }
 
     @Test

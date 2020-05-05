@@ -42,13 +42,11 @@ public class TasksController {
      * @return the tasks belong to the account that we just find
      * **/
     @GetMapping("/api/task/{username}")
-    public List<Task> getAllTasksBelongToSpecifiedUsername(@PathVariable String username) {
+    public ResponseEntity<List<Task>> getAllTasksBelongToSpecifiedUsername(@PathVariable String username) {
         try {
-            Account accountMadeRequestToGetAllHisTasks = accountService.findByUsername(username);
-            return accountMadeRequestToGetAllHisTasks.getTasks();
+            return new ResponseEntity<>(accountService.findByUsername(username).getTasks(), new HttpHeaders(), HttpStatus.OK);
         } catch (IndexOutOfBoundsException | NullPointerException e) {
-            e.printStackTrace();
-            return null;
+            return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -65,10 +63,9 @@ public class TasksController {
         try {
             Account accountWantToAddTask = accountService.findByUsername(username);
             taskService.add(task, accountWantToAddTask);
-            return new ResponseEntity<String>("task added successfully", new HttpHeaders(), HttpStatus.OK);
+            return new ResponseEntity<>("task added successfully", new HttpHeaders(), HttpStatus.OK);
         } catch (IndexOutOfBoundsException | NullPointerException e) {
-            e.printStackTrace();
-            return new ResponseEntity<String>("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -86,13 +83,11 @@ public class TasksController {
     public ResponseEntity<String> deleteTask(@PathVariable String username, @PathVariable int taskNumberOrder) {
         try {
             Account accountWantToDeleteTask = accountService.findByUsername(username);
-            List<Task> tasks = accountWantToDeleteTask.getTasks();
-            Task deleteTask = tasks.get(taskNumberOrder-1); // -1 for getting actual index because its not passed as array index
+            Task deleteTask = getTaskByUsernameAndSerialNumber(accountWantToDeleteTask, taskNumberOrder);
             taskService.delete(deleteTask, accountWantToDeleteTask);
-            return new ResponseEntity<String>("task deleted successfully", new HttpHeaders(), HttpStatus.OK);
+            return new ResponseEntity<>("task deleted successfully", new HttpHeaders(), HttpStatus.OK);
         } catch (IndexOutOfBoundsException | NullPointerException e) {
-            e.printStackTrace();
-            return new ResponseEntity<String>("username do not exist or task not exist or serial number of task not correct", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("username do not exist or task not exist or serial number of task not correct", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -110,10 +105,14 @@ public class TasksController {
             accountService.update(accountToBeUpdated);
             return new ResponseEntity<String>("tasks updated successfully", new HttpHeaders(), HttpStatus.OK);
         } catch (IndexOutOfBoundsException | NullPointerException e) {
-            e.printStackTrace();
-            System.out.println("problem");
             return new ResponseEntity<String>("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private Task getTaskByUsernameAndSerialNumber(Account account, int taskNumberOrder) {
+        List<Task> tasksOfAccount = account.getTasks();
+        // -1 for getting the actual index because its not passed as array index but as order number(serial number)
+        return tasksOfAccount.get(taskNumberOrder-1);
     }
 
 }
