@@ -16,29 +16,19 @@ public interface AccountRepository extends JpaRepository<Account, Integer>, IAcc
         saveAndFlush(account);
     }
 
-    @Query(value = "SELECT * FROM accounts WHERE accounts.username = ?1 AND accounts.password = ?2", nativeQuery = true)
+    @Query(value = "SELECT CASE WHEN COUNT(*) = 1 THEN true ELSE false END FROM accounts WHERE accounts.username = ?1 AND accounts.password = ?2", nativeQuery = true)
     @Transactional
-    Optional<Account> isExistByUsernameAndPasswordQuery(String username, String password);
+    @Override
+    boolean isExistByUsernameAndPassword(String username, String password);
 
-    @Query(value = "SELECT * FROM accounts WHERE accounts.username = ?1", nativeQuery = true)
+    @Query(value = "SELECT CASE WHEN COUNT(*) = 1 THEN true ELSE false END FROM accounts WHERE accounts.username = ?1", nativeQuery = true)
     @Transactional
-    Optional<Account> isExistByUsernameQuery(String username);
+    @Override
+    boolean isExistByUsername(String username);
 
     @Override
     @Query(value = "SELECT * FROM accounts WHERE accounts.username = ?1", nativeQuery = true)
     @Transactional
     Optional<Account> findByUsername(String username);
-
-    @Override
-    default boolean isExistByUsernameAndPassword(String username, String password) {
-        Optional<Account> account = isExistByUsernameAndPasswordQuery(username, password);
-        return account.isPresent();
-    }
-
-    @Override
-    default boolean isExistByUsername(String username) {
-        Optional<Account> account = isExistByUsernameQuery(username);
-        return account.isPresent();
-    }
 
 }

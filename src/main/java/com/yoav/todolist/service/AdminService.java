@@ -17,7 +17,7 @@ public class AdminService {
     @Autowired
     public AdminService(@Qualifier("adminRepository") IAdminDao adminDao) {
         this.adminDao = adminDao;
-        if (!(adminDao.IsBaseAdminAccountExist())) {
+        if ( ! adminDao.IsBaseAdminAccountExist() ) {
             adminDao.add(new Admin("admin", "admin")); // if base admin account not exist
         }
     }

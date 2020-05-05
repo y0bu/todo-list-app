@@ -29,17 +29,17 @@ public interface IAdminDao {
     /**
      * is basically for making sure that the base admin account exist the base admin account is "admin" "admin"
      * the reason that we have base admin account is because user cant just register for new admin only admin can
-     * create new admins so we need at least one admin which is the base admin
-     * @implNote if you want to use it for real change the base account to something more safe then "admin" "admin"
-     * the base admin need to be exist in order to adding more admins because only admin can admin so we need admin to
+     * create new admins so we need at least one admin in the starting of the application which is the base admin
+     * @implNote if you want to use it for deployment change the base account to something more safe then "admin" "admin"
+     * the base admin need to be exist in order to adding more admins because only admin can add admin so we need admin to
      * be existed
-     * @see com.yoav.todolist.controllers.AdminController
+     * @see com.yoav.todolist.service.AdminService
      * **/
     boolean IsBaseAdminAccountExist();
 
     /**
      * WARNING!!!!!!
-     * @implNote USES ONLY IN INTEGRATION TESTING
+     * @implNote USE THIS ONLY IN INTEGRATION TESTING
      * **/
     void deleteAllInBatch();
 }

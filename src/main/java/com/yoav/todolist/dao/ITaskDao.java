@@ -13,12 +13,13 @@ public interface ITaskDao {
     /**
      * is simply for adding task
      * @see com.yoav.todolist.controllers.DashboardController
+     * @see com.yoav.todolist.controllers.api.TasksController
      * **/
     void add(Task task, Account account);
 
     /**
-     * is for deleting task
-     * @see com.yoav.todolist.controllers.DashboardController
+     * is for deleting task by id
+     * @see com.yoav.todolist.controllers.AdminController
      * **/
     void deleteById(int id);
 
@@ -43,7 +44,9 @@ public interface ITaskDao {
     void deleteAllInBatch();
 
     /**
-     * to delete task
+     * to simply delete task
+     * @see com.yoav.todolist.controllers.api.TasksController
+     * @see com.yoav.todolist.controllers.DashboardController
      * **/
     void delete(Task task, Account account);
 
