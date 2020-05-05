@@ -77,7 +77,7 @@ public class AdminController {
     * */
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
     public String getAllAccountsMainAdminPanel(HttpSession session, Model model) {
-        if (session.getAttribute("isAdmin") == null) return "unauthorized";
+        if (isUserNotPermittedToBeAdmin(session)) return "unauthorized";
 
         model.addAttribute("accounts", accountService.getAll());
 
@@ -100,7 +100,7 @@ public class AdminController {
     * */
     @RequestMapping(value = "/admin", method = RequestMethod.POST, params = "deleteAccount")
     public String postDeleteAccount(@RequestParam String deleteAccount, HttpSession session) {
-        if (session.getAttribute("isAdmin") == null) return "unauthorized";
+        if (isUserNotPermittedToBeAdmin(session)) return "unauthorized";
         int idOfDeletingAccount = Integer.parseInt(deleteAccount);
         accountService.deleteById(idOfDeletingAccount);
         return "redirect:/admin";
@@ -114,7 +114,7 @@ public class AdminController {
     * */
     @RequestMapping(value = "/admin/{usernameOfAccount}", method = RequestMethod.GET)
     public String getTasksOfNameOfAccounts(@PathVariable String usernameOfAccount, HttpSession session, Model model) {
-        if (session.getAttribute("isAdmin") == null) return "unauthorized";
+        if (isUserNotPermittedToBeAdmin(session)) return "unauthorized";
         Account requestedAccount = accountService.findByUsername(usernameOfAccount);
         model.addAttribute("tasks", requestedAccount.getTasks());
         return "admin/displayTasksOfUsers";
@@ -131,7 +131,7 @@ public class AdminController {
             @PathVariable String usernameOfAccount,
             HttpSession session) {
 
-        if (session.getAttribute("isAdmin") == null) return "unauthorized";
+        if (isUserNotPermittedToBeAdmin(session)) return "unauthorized";
         int idOfDeletingTask = Integer.parseInt(deleteTask);
         taskService.deleteById(idOfDeletingTask);
         return "redirect:/admin/" + usernameOfAccount; // redirecting back to the list of tasks of the specifying username
@@ -144,7 +144,7 @@ public class AdminController {
     * */
     @RequestMapping(value = "/admin/add", method = RequestMethod.GET)
     public String getCreateNewAdmin(HttpSession session) {
-        if (session.getAttribute("isAdmin") == null) return "unauthorized";
+        if (isUserNotPermittedToBeAdmin(session)) return "unauthorized";
         else return "admin/createAdmin";
     }
 
@@ -163,7 +163,7 @@ public class AdminController {
             Model model,
             RedirectAttributes attributes) {
 
-        if (session.getAttribute("isAdmin") == null) return "unauthorized"; // checking if user have permission to the admin feature
+        if (isUserNotPermittedToBeAdmin(session)) return "unauthorized";
 
         Admin newAdmin = new Admin(adminName, password);
         if ( ! adminService.add(newAdmin)) {
@@ -172,7 +172,10 @@ public class AdminController {
         }
         attributes.addFlashAttribute("alert", "the admin added successfully you can log in now");
         return "redirect:/admin/login"; // redirecting to login page because login was successfully done.
+    }
 
+    private boolean isUserNotPermittedToBeAdmin(HttpSession session) {
+        return (session.getAttribute("isAdmin") == null);
     }
 
 }
