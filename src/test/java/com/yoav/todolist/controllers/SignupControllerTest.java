@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -83,6 +84,8 @@ public class SignupControllerTest {
                 andExpect(status().is3xxRedirection()).
                 andExpect(redirectedUrl("/login")).
                 andExpect(flash().attribute("alert", "you signed up successfully now you can log in"));
+
+        assertThat(accountDao.findByUsername("user")).isPresent();
     }
 
 }

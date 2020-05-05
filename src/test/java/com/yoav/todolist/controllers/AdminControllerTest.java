@@ -65,7 +65,6 @@ public class AdminControllerTest {
 
     @Test
     public void postValidateLoginAdminTest_whenAdminNameAndPasswordAreIncorrect() throws Exception {
-        // those conditionals are already exist when starting the application therefore the login should be successful
         String adminName = "notExist";
         String password = "notExist";
 
@@ -167,14 +166,14 @@ public class AdminControllerTest {
     }
 
     @Test
-    public void getTasksOfNameOfAccountsTest_whenUserDoNotHaveHaveAdminPermission() throws Exception {
+    public void getTasksOfNameOfAccountsTest_whenUserDoNotHaveAdminPermission() throws Exception {
         accountDao.deleteAllInBatch();
         accountDao.add(new Account("some account", "some password"));
         accountDao.add(new Account("some account2", "some password1"));
         accountDao.add(new Account("some1 account", "some password2"));
 
         mockMvc.
-                perform(get("/admin/some%20account")).
+                perform(get("/admin/some account")).
                 andExpect(status().isOk()).
                 andExpect(view().name("unauthorized"));
     }

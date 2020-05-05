@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.Cookie;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,9 @@ public class DashboardControllerTest {
     @Autowired
     @Qualifier("accountRepository")
     private IAccountDao accountDao;
+
+    @Autowired
+    private EntityManager entityManager;
 
     private List<String> tasksToStringList(List<Task> tasks) {
         List<String> tasksAsStrings = new ArrayList<>();
@@ -98,7 +102,7 @@ public class DashboardControllerTest {
     }
 
     @Test
-    public void postDashboardRemoveTaskTest_whenINotHaveCookieAndSessionCookieEither() throws Exception {
+    public void postDashboardRemoveTaskTest_whenUserNotHaveCookieAndSessionCookieEither() throws Exception {
         mockMvc.
                 perform(post("/dashboard").param("delete", "1")).
                 andExpect(status().is3xxRedirection()).
@@ -106,7 +110,7 @@ public class DashboardControllerTest {
     }
 
     @Test
-    public void postDashboardRemoveTaskTest_whenIHaveCookie() throws Exception {
+    public void postDashboardRemoveTaskTest_whenUserHaveCookie() throws Exception {
         Account account = new Account("yoav-spring", "spring-boot");
         List<Task> tasks = new ArrayList<>();
         tasks.add(new Task("task12"));
@@ -120,6 +124,8 @@ public class DashboardControllerTest {
         cookie.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
         cookie.setPath("/"); // global cookie accessible every where
 
+        assertThat(accountDao.findByUsername("yoav-spring").orElse(new Account()).getTasks()).hasSize(2);
+
         mockMvc.
                 perform(post("/dashboard").
                         cookie(cookie).
@@ -131,6 +137,10 @@ public class DashboardControllerTest {
                                 ))).
                 andExpect(status().is3xxRedirection()).
                 andExpect(redirectedUrl("/dashboard"));
+
+        entityManager.flush();
+        entityManager.clear();
+        assertThat(accountDao.findByUsername("yoav-spring").orElse(new Account()).getTasks()).hasSize(1);
     }
 
     @Test
@@ -155,6 +165,8 @@ public class DashboardControllerTest {
         cookie.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
         cookie.setPath("/"); // global cookie accessible every where
 
+        assertThat(accountDao.findByUsername("some user").orElse(new Account()).getTasks()).hasSize(2);
+
         mockMvc.
                 perform(post("/dashboard").
                         cookie(cookie).
@@ -166,6 +178,10 @@ public class DashboardControllerTest {
                                 ))).
                 andExpect(status().isOk()).
                 andExpect(view().name("unauthorized"));
+
+        entityManager.flush();
+        entityManager.clear();
+        assertThat(accountDao.findByUsername("some user").orElse(new Account()).getTasks()).hasSize(2);
     }
 
     @Test
@@ -317,9 +333,9 @@ public class DashboardControllerTest {
                 perform(post("/dashboard").
                         cookie(cookie).
                         param("logout", (String) null)).
-                andExpect(result ->
-                        assertThat(
-                                result.getResponse().getCookie("username").getValue()).isNull());
+                andExpect(result -> {
+                    assertThat(result.getResponse().getCookie("username").getValue()).isNull();
+                });
     }
 
 }
