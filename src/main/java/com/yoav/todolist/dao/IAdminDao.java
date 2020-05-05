@@ -34,6 +34,8 @@ public interface IAdminDao {
      * the base admin need to be exist in order to adding more admins because only admin can add admin so we need admin to
      * be existed
      * @see com.yoav.todolist.service.AdminService
+     * to change the base admin account
+     * @see AdminRepository
      * **/
     boolean IsBaseAdminAccountExist();
 
