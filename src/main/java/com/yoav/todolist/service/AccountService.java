@@ -32,8 +32,14 @@ public class AccountService {
         accountDao.deleteById(id);
     }
 
-    public void add(Account account) {
+    /**
+     * @return true if the account can be inserted else the account name is already have been taken we cant insert 
+     * account into the data base and then we return false
+     * */
+    public boolean add(Account account) {
+        if (isExistByUsername(account.getUsername())) return false;
         accountDao.add(account);
+        return true;
     }
 
     public Account findByUsername(String username) {

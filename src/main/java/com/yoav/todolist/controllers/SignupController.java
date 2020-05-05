@@ -66,7 +66,7 @@ public class SignupController {
         // the string gonna be empty when the password is strong enough
         String passwordAlert = PasswordUtils.chooseAlertWeakPassword(password);
 
-        if (!password.equals(passwordAgain)) {
+        if ( ! password.equals(passwordAgain)) {
             model.addAttribute("alert", "password you typed is not the same as you typed above");
             return "signup/index";
         }
@@ -74,13 +74,12 @@ public class SignupController {
             model.addAttribute("alert", passwordAlert);
             return "signup/index";
         }
-        else if (accountService.isExistByUsername(username)) {
-            model.addAttribute("alert", "the username is already have been taken");
-            return "signup/index";
-        }
         else {
-            // we do not have any problems
-            accountService.add(new Account(username, password));
+            if ( ! accountService.add(new Account(username, password))) { // if the username is already have been taken
+                model.addAttribute("alert", "the username is already have been taken");
+                return "signup/index";
+            }
+            // if everything is fine
             attributes.addFlashAttribute("alert", "you signed up successfully now you can log in");
             return "redirect:/login";
         }

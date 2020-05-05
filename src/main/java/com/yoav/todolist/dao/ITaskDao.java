@@ -11,13 +11,13 @@ import java.util.Optional;
 public interface ITaskDao {
 
     /**
-     * is for simply adding task
+     * is simply for adding task
      * @see com.yoav.todolist.controllers.DashboardController
      * **/
     void add(Task task, Account account);
 
     /**
-     * is for deleting task in
+     * is for deleting task
      * @see com.yoav.todolist.controllers.DashboardController
      * **/
     void deleteById(int id);

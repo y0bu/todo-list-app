@@ -10,15 +10,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
 class TaskRepositoryTest {
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Autowired
     @Qualifier("taskRepository")
@@ -35,51 +36,21 @@ class TaskRepositoryTest {
     }
 
     @Test
-    public void deleteAllByAccountIdTest_updatingAccountForDemonstrationTheUsageOfThisMethod() {
-        // add account with list of tasks
-        Account account = new Account("admin", "admin");
-        List<Task> tasks = new ArrayList<>();
-        tasks.add(new Task("task1"));
-        tasks.add(new Task("task2"));
-        tasks.add(new Task("task3"));
-        account.setTasks(tasks);
+    public void deleteByIdTest_simpleCaseWhereInsertingAccountWithTasksAndThenRemovingOneOfUserTask() {
+        Account account = new Account("yoav", "abu");
+        account.addTask(new Task("task1"));
+        account.addTask(new Task("task2"));
+        account.addTask(new Task("task3"));
         accountDao.add(account);
 
-        // asserting that all the tasks are inserted
-        account = accountDao.findByUsername("admin").orElse(null);
-        if (account == null) {
-            fail();
-        } else {
-            assertThat(account.getTasks()).hasSize(3);
-        }
+        assertThat(accountDao.findByUsername("yoav").orElse(new Account()).getTasks()).hasSize(3);
 
-        // update the account with new list of tasks
-        List<Task> newTasks = new ArrayList<>();
-        newTasks.add(new Task("java"));
-        newTasks.add(new Task("hibernate spring boot"));
+        taskDao.deleteById(accountDao.findByUsername("yoav").orElse(new Account()).getTasks().get(0).getId());
 
-        account.setTasks(newTasks);
-        accountDao.add(account);
+        entityManager.flush();
+        entityManager.clear();
 
-        // asserting that all the tasks are updated
-        account = accountDao.findByUsername("admin").orElse(null);
-        if (account == null) {
-            fail();
-        } else {
-            assertThat(account.getTasks()).hasSize(2);
-        }
-
-        // new we want only to insert one task to admin account
-        Task newTask = new Task("the new Task");
-        taskDao.add(newTask, account);
-
-        // asserting that the task is inserted
-        account = accountDao.findByUsername("admin").orElse(null);
-        if (account == null) {
-            fail();
-        } else {
-            assertThat(account.getTasks()).hasSize(3);
-        }
+        assertThat(accountDao.findByUsername("yoav").orElse(new Account()).getTasks()).hasSize(2);
     }
 
 }

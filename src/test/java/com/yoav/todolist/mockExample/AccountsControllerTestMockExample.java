@@ -46,6 +46,9 @@ public class AccountsControllerTestMockExample {
 
         // Account Service Mock Settings
 
+        when(accountServiceMock.add(new Account("yoav", "pass"))).thenReturn(true);
+        when(accountServiceMock.add(new Account("exist", "pass"))).thenReturn(false);
+
         when(accountServiceMock.isExistByUsername(anyString())).thenReturn(false);
         when(accountServiceMock.isExistByUsername(eq("exist"))).thenReturn(true);
 

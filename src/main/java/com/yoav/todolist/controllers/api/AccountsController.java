@@ -56,11 +56,8 @@ public class AccountsController {
      * **/
     @PostMapping("/api/account")
     public ResponseEntity<String> addAccount(@Valid @RequestBody Account account) {
-        if (accountService.isExistByUsername(account.getUsername())) {
-            return new ResponseEntity<String>("the username is already exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
-        }
-        accountService.add(account);
-        return new ResponseEntity<String>("user is inserted to the database successfully", new HttpHeaders(), HttpStatus.OK);
+        if (accountService.add(account)) return new ResponseEntity<>("user is inserted to the database successfully", new HttpHeaders(), HttpStatus.OK);
+        return new ResponseEntity<>("the username is already exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     /**

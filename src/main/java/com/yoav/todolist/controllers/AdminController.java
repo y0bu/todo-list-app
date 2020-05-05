@@ -64,10 +64,10 @@ public class AdminController {
         if (adminService.isExistByAdminNameAndPassword(adminName, password)) {
             session.setAttribute("isAdmin", true);
             return "redirect:/admin";
-        } else {
-            model.addAttribute("alert", "the password and/or username are incorrect");
-            return "admin/login";
         }
+
+        model.addAttribute("alert", "the password and/or username are incorrect");
+        return "admin/login";
     }
 
     /*
@@ -77,17 +77,18 @@ public class AdminController {
     * */
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
     public String getAllAccountsMainAdminPanel(HttpSession session, Model model) {
-        if (session.getAttribute("isAdmin") != null) {
-            model.addAttribute("accounts", accountService.getAll());
+        if (session.getAttribute("isAdmin") == null) return "unauthorized";
 
-            // this line is for specifying the request path(to the account tasks management("/admin/{username}"))
-            // with the username of account
-            model.addAttribute("urlToRedirect", "/admin/");
+        model.addAttribute("accounts", accountService.getAll());
 
-            return "admin/displayUsers";
-        } else {
-            return "unauthorized";
-        }
+        // this line is for specifying the request path(to the account tasks management("/admin/{username}"))
+        // with the username of account
+        // just dong remove this line if you do not understand but if you actually want to know what is this line
+        // just go to the html file "displayUsers.html" in the admin folder in templates and then there you will
+        // understand
+        model.addAttribute("urlToRedirect", "/admin/");
+
+        return "admin/displayUsers";
     }
 
     /*
@@ -164,15 +165,14 @@ public class AdminController {
 
         if (session.getAttribute("isAdmin") == null) return "unauthorized"; // checking if user have permission to the admin feature
 
-        if (adminService.isExistByAdminName(adminName)) {
+        Admin newAdmin = new Admin(adminName, password);
+        if ( ! adminService.add(newAdmin)) {
             model.addAttribute("alert", "admin name is already have been taken");
             return "admin/createAdmin";
-        } else {
-            Admin newAdmin = new Admin(adminName, password);
-            adminService.add(newAdmin);
-            attributes.addFlashAttribute("alert", "the admin added successfully you can log in now");
-            return "redirect:/admin/login"; // redirecting to login page because login was successfully done.
         }
+        attributes.addFlashAttribute("alert", "the admin added successfully you can log in now");
+        return "redirect:/admin/login"; // redirecting to login page because login was successfully done.
+
     }
 
 }
