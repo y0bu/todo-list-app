@@ -1,6 +1,7 @@
 package com.yoav.todolist.service;
 
 import com.yoav.todolist.dao.IAccountDao;
+import com.yoav.todolist.exceptions.UsernameNotFoundException;
 import com.yoav.todolist.models.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,7 +17,7 @@ public class AccountService {
     private final IAccountDao accountDao;
 
     @Autowired
-    public AccountService(@Qualifier("accountMysqlImpl") IAccountDao accountDao) {
+    public AccountService(@Qualifier("accountRepository") IAccountDao accountDao) {
         this.accountDao = accountDao;
     }
 
@@ -32,12 +33,18 @@ public class AccountService {
         accountDao.deleteById(id);
     }
 
-    public void add(Account account) {
+    /**
+     * @return true if the account can be inserted else the account name is already have been taken we cant insert 
+     * account into the data base and then we return false
+     * */
+    public boolean add(Account account) {
+        if (isExistByUsername(account.getUsername())) return false;
         accountDao.add(account);
+        return true;
     }
 
     public Account findByUsername(String username) {
-        return accountDao.findByUsername(username);
+        return accountDao.findByUsername(username).orElseThrow(UsernameNotFoundException::new);
     }
 
     public List<Account> getAll() {
@@ -48,7 +55,8 @@ public class AccountService {
         accountDao.delete(account);
     }
 
-    public Account update(Account account) {
-        return accountDao.update(account);
+    public void update(Account account) {
+        accountDao.add(account);
     }
+
 }

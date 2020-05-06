@@ -4,6 +4,7 @@ import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Task;
 import com.yoav.todolist.service.AccountService;
 import com.yoav.todolist.service.TaskService;
+import com.yoav.todolist.utils.CookiesUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,17 +53,15 @@ public class DashboardController {
      * tasks of that user (the method is fetching the username with the cookie or with the session cookie)
      * **/
     @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
-    public String getDashboard(Model model, HttpSession session, @CookieValue(value = "username", defaultValue = "notSetCookie") String username) {
-        if (!(username.equals("notSetCookie"))) {
-            Account thisAccount = accountService.findByUsername(username);
-            model.addAttribute("tasks", thisAccount.getTasks());
-            return "dashboard/index";
-        }
+    public String getDashboard(Model model,
+                               HttpSession session,
+                               @CookieValue(value = "username", defaultValue = "notSetCookie") String username) {
 
-        String usernameOfLoggedUser = (String)session.getAttribute("username");
-        if (usernameOfLoggedUser == null) {
+        String usernameOfLoggedUser;
+
+        if ((usernameOfLoggedUser =
+                getUsernameFromCookieOrSession((String)session.getAttribute("username"), username)) == null)
             return "redirect:/";
-        }
 
         Account thisAccount = accountService.findByUsername(usernameOfLoggedUser);
         model.addAttribute("tasks", thisAccount.getTasks());
@@ -78,26 +77,30 @@ public class DashboardController {
      * @return redirect to the to-do list tasks after deleting the task
      * **/
     @RequestMapping(value = "/dashboard", method = RequestMethod.POST, params = "delete")
-    public String postDashboardRemoveTask(@RequestParam String delete, HttpSession session, @CookieValue(value = "username", defaultValue = "notSetCookie") String username) {
+    public String postDashboardRemoveTask(
+            @RequestParam String delete,
+            HttpSession session,
+            @CookieValue(value = "username", defaultValue = "notSetCookie") String username) {
 
         String usernameOfAccountWantToDeleteTask;
 
-        if (!(username.equals("notSetCookie"))) { // if it use cookie
-            usernameOfAccountWantToDeleteTask = username;
-        } else { // if it use session cookie
-            if (session.getAttribute("username") == null) return "redirect:/";
-            usernameOfAccountWantToDeleteTask = (String) session.getAttribute("username");
-        }
+        if ((usernameOfAccountWantToDeleteTask =
+                getUsernameFromCookieOrSession((String)session.getAttribute("username"), username)) == null)
+            return "redirect:/";
 
         // check if user that want to delete task is actually deleting one of his tasks because hacker can change the id
         // with inspect element and delete other tasks
         Account accountThatWantToDeleteTaskById = accountService.findByUsername(usernameOfAccountWantToDeleteTask);
         Task taskWantedToDelete = taskService.getById(Integer.parseInt(delete));
-        if (!(accountThatWantToDeleteTaskById.getTasks().contains(taskWantedToDelete))) return "unauthorized";
+
+        if ( ! accountThatWantToDeleteTaskById.getTasks().contains(taskWantedToDelete) ) return "unauthorized";
 
         // delete task
-        int idOfDeletingTask = Integer.parseInt(delete);
-        taskService.delete(idOfDeletingTask);
+        taskService.delete(
+                taskWantedToDelete,
+                accountThatWantToDeleteTaskById
+        );
+
         return "redirect:/dashboard";
     }
 
@@ -109,18 +112,18 @@ public class DashboardController {
      * adding
      * **/
     @RequestMapping(value = "/dashboard", method = RequestMethod.POST, params = "addTask")
-    public String postDashboardAddTask(@RequestParam String addTask, HttpSession session, @CookieValue(value = "username", defaultValue = "notSetCookie") String username) {
+    public String postDashboardAddTask(
+            @RequestParam String addTask,
+            HttpSession session,
+            @CookieValue(value = "username", defaultValue = "notSetCookie") String username) {
 
-        // user not allowed to add task length more then 25 characters and not allowed to add empty task
-        if (addTask.trim().equals("") || addTask.length() > 25) return "redirect:/dashboard";
+        if ( ! isValidTask(addTask) ) return "redirect:/dashboard";
 
         String usernameOfAccountWantToAddTask;
 
-        if (!(username.equals("notSetCookie"))) { // if it use cookie
-            usernameOfAccountWantToAddTask = username;
-        } else { // if it use session cookie
-            usernameOfAccountWantToAddTask = (String)session.getAttribute("username");
-        }
+        if ((usernameOfAccountWantToAddTask =
+                getUsernameFromCookieOrSession((String)session.getAttribute("username"), username)) == null)
+            return "redirect:/";
 
         // adding the task
         Task addedTask = new Task(addTask);
@@ -138,17 +141,39 @@ public class DashboardController {
      * @return redirect back to the home page after logout
      * **/
     @RequestMapping(value = "/dashboard", method = RequestMethod.POST, params = "logout")
-    public String postDashboardLogout(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+    public String postDashboardLogout(
+            HttpSession session,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
         for (Cookie cookie : request.getCookies()) {
             if (cookie.getName().equals("username")) {
-                cookie.setMaxAge(0);
-                cookie.setValue(null);
-                cookie.setPath("/");
-                response.addCookie(cookie);
+                CookiesUtils.deleteCookie(cookie, response);
             }
         }
 
         session.removeAttribute("username");
+
         return "redirect:/";
     }
+
+    /**
+     * @return null if user is not using cookie or session else it return string with the username of the user that
+     * login the string with the username is can be from the session or from the cookie so here we are checking which
+     * method(session or cookie) and extracting the value of the username and then returning the value of the username
+     * */
+    private String getUsernameFromCookieOrSession(String session, String cookie) {
+        if ( ! cookie.equals("notSetCookie") ) return cookie;
+
+        // if the user is did not login so the session going to be null
+        return session;
+    }
+
+    /**
+     * valid task is task that has length less then 35 and the task need to not be empty or only spaces
+     * */
+    private boolean isValidTask(String task) {
+        return ( ! ( task.trim().equals("") || task.length() > 35 ) );
+    }
+
 }

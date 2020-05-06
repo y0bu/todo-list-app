@@ -1,5 +1,6 @@
 package com.yoav.todolist.controllers.api;
 
+import com.yoav.todolist.exceptions.UsernameNotFoundException;
 import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Task;
 import com.yoav.todolist.service.AccountService;
@@ -42,13 +43,11 @@ public class TasksController {
      * @return the tasks belong to the account that we just find
      * **/
     @GetMapping("/api/task/{username}")
-    public List<Task> getAllTasksBelongToSpecifiedUsername(@PathVariable String username) {
+    public ResponseEntity<List<Task>> getAllTasksBelongToSpecifiedUsername(@PathVariable String username) {
         try {
-            Account accountMadeRequestToGetAllHisTasks = accountService.findByUsername(username);
-            return accountMadeRequestToGetAllHisTasks.getTasks();
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
-            return null;
+            return new ResponseEntity<>(accountService.findByUsername(username).getTasks(), new HttpHeaders(), HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -61,14 +60,13 @@ public class TasksController {
      * existing we return "username do not exist" without adding task
      * **/
     @PostMapping("/api/task/{username}")
-    public ResponseEntity addTask(@Valid @RequestBody Task task, @PathVariable String username) {
+    public ResponseEntity<String> addTask(@Valid @RequestBody Task task, @PathVariable String username) {
         try {
             Account accountWantToAddTask = accountService.findByUsername(username);
             taskService.add(task, accountWantToAddTask);
-            return new ResponseEntity("task added successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
-            return new ResponseEntity("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("task added successfully", new HttpHeaders(), HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -83,16 +81,14 @@ public class TasksController {
      * response ("task deleted successfully") else it will display ("username do not exist")
      * **/
     @DeleteMapping("/api/task/{username}/{taskNumberOrder}")
-    public ResponseEntity deleteTask(@PathVariable String username, @PathVariable int taskNumberOrder) {
+    public ResponseEntity<String> deleteTask(@PathVariable String username, @PathVariable int taskNumberOrder) {
         try {
             Account accountWantToDeleteTask = accountService.findByUsername(username);
-            List<Task> tasks = accountWantToDeleteTask.getTasks();
-            Task deleteTask = tasks.get(taskNumberOrder-1); // -1 for getting actual index because its not passed as array index
-            taskService.delete(deleteTask.getId());
-            return new ResponseEntity("task deleted successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
-            return new ResponseEntity("username do not exist or task not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+            Task deleteTask = getTaskByUsernameAndSerialNumber(accountWantToDeleteTask, taskNumberOrder);
+            taskService.delete(deleteTask, accountWantToDeleteTask);
+            return new ResponseEntity<>("task deleted successfully", new HttpHeaders(), HttpStatus.OK);
+        } catch (UsernameNotFoundException | IndexOutOfBoundsException e) {
+            return new ResponseEntity<>("username do not exist or task not exist or serial number of task not correct", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -103,18 +99,21 @@ public class TasksController {
      * response ("tasks updated successfully") else it will display ("username do not exist")
      * **/
     @PutMapping("/api/task/{username}")
-    public ResponseEntity updateTasks(@Valid @RequestBody List<Task> tasks, @PathVariable String username) {
+    public ResponseEntity<String> updateTasks(@Valid @RequestBody List<Task> tasks, @PathVariable String username) {
         try {
             Account accountToBeUpdated = accountService.findByUsername(username);
             accountToBeUpdated.setTasks(tasks);
-            taskService.deleteAllByAccountId(accountToBeUpdated.getId());
             accountService.update(accountToBeUpdated);
-            return new ResponseEntity("tasks updated successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
-            System.out.println("problem");
-            return new ResponseEntity("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("tasks updated successfully", new HttpHeaders(), HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private Task getTaskByUsernameAndSerialNumber(Account account, int taskNumberOrder) {
+        List<Task> tasksOfAccount = account.getTasks();
+        // -1 for getting the actual index because its not passed as array index but as order number(serial number)
+        return tasksOfAccount.get(taskNumberOrder-1);
     }
 
 }

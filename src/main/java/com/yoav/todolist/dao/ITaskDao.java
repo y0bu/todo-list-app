@@ -5,19 +5,21 @@ import com.yoav.todolist.models.Task;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public interface ITaskDao {
 
     /**
-     * is for simply adding task
+     * is simply for adding task
      * @see com.yoav.todolist.controllers.DashboardController
+     * @see com.yoav.todolist.controllers.api.TasksController
      * **/
     void add(Task task, Account account);
 
     /**
-     * is for deleting task in
-     * @see com.yoav.todolist.controllers.DashboardController
+     * is for deleting task by id
+     * @see com.yoav.todolist.controllers.AdminController
      * **/
     void deleteById(int id);
 
@@ -27,7 +29,7 @@ public interface ITaskDao {
      * want to delete the task (for security purposes)
      * @see com.yoav.todolist.controllers.DashboardController
      * **/
-    Task getById(int id);
+    Optional<Task> getById(int id);
 
     /**
      * get all the tasks used in the api
@@ -36,12 +38,16 @@ public interface ITaskDao {
     List<Task> getAll();
 
     /**
-     * is for deleting all the tasks before updating because hibernate is shit and do not want to update my tasks
-     * and now in clam mood: hibernate not updating correctly the tasks it just add tasks but not removing the unwanted
-     * tasks
-     * so we do the hard work and removing the task that hibernate don't want
-     * @see TaskMysqlImpl
-     * @see com.yoav.todolist.controllers.api.TasksController
+     * WARNING!!!!!!
+     * @implNote USES ONLY IN INTEGRATION TESTING
      * **/
-    void deleteAllByAccountId(int id);
+    void deleteAllInBatch();
+
+    /**
+     * to simply delete task
+     * @see com.yoav.todolist.controllers.api.TasksController
+     * @see com.yoav.todolist.controllers.DashboardController
+     * **/
+    void delete(Task task, Account account);
+
 }

@@ -1,6 +1,7 @@
 package com.yoav.todolist.service;
 
 import com.yoav.todolist.dao.ITaskDao;
+import com.yoav.todolist.exceptions.UsernameNotFoundException;
 import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class TaskService {
     private final ITaskDao taskDao;
 
     @Autowired
-    public TaskService(@Qualifier("taskMysqlImpl") ITaskDao taskDao) {
+    public TaskService(@Qualifier("taskRepository") ITaskDao taskDao) {
         this.taskDao = taskDao;
     }
 
@@ -25,20 +26,20 @@ public class TaskService {
         taskDao.add(task, account);
     }
 
-    public void delete(int id) {
-        taskDao.deleteById(id);
+    public void delete(Task task, Account account) {
+        taskDao.delete(task, account);
     }
 
     public Task getById(int id) {
-        return taskDao.getById(id);
+        return taskDao.getById(id).orElseThrow(UsernameNotFoundException::new);
     }
 
     public List<Task> getAll() {
         return taskDao.getAll();
     }
 
-    public void deleteAllByAccountId(int id) {
-        taskDao.deleteAllByAccountId(id);
+    public void deleteById(int id) {
+        taskDao.deleteById(id);
     }
 
 }

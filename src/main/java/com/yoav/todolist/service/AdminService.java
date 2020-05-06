@@ -15,16 +15,21 @@ public class AdminService {
     private final IAdminDao adminDao;
 
     @Autowired
-    public AdminService(@Qualifier("adminMysqlImpl") IAdminDao adminDao) {
+    public AdminService(@Qualifier("adminRepository") IAdminDao adminDao) {
         this.adminDao = adminDao;
+        if ( ! adminDao.IsBaseAdminAccountExist() ) {
+            adminDao.add(new Admin("admin", "admin")); // if base admin account not exist
+        }
     }
 
-    public void checkIfBaseAdminAccountExist() {
-        adminDao.checkIfBaseAdminAccountExist();
-    }
-
-    public void add(Admin admin) {
+    /**
+     * @return true if the account can be inserted and then in insert the account else it return false if
+     * the adminName is already have been taken and then method return false and not inserting the account
+     * */
+    public boolean add(Admin admin) {
+        if (isExistByAdminName(admin.getAdminName())) return false;
         adminDao.add(admin);
+        return true;
     }
 
     public boolean isExistByAdminName(String adminName) {
@@ -34,4 +39,5 @@ public class AdminService {
     public boolean isExistByAdminNameAndPassword(String adminName, String password) {
         return adminDao.isExistByAdminNameAndPassword(adminName, password);
     }
+
 }
