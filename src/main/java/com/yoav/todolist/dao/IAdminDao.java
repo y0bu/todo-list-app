@@ -33,6 +33,7 @@ public interface IAdminDao {
      * @implNote if you want to use it for deployment change the base account to something more safe then "admin" "admin"
      * the base admin need to be exist in order to adding more admins because only admin can add admin so we need admin to
      * be existed
+     * to change the base admin account
      * @see com.yoav.todolist.service.AdminService
      * to change the base admin account
      * @see AdminRepository
