@@ -1,6 +1,7 @@
 package com.yoav.todolist.controllers;
 
 import com.yoav.todolist.dao.IAccountDao;
+import com.yoav.todolist.exceptions.UsernameNotFoundException;
 import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Task;
 import org.junit.Test;
@@ -69,7 +70,7 @@ public class DashboardControllerTest {
                 perform(get("/dashboard").cookie(cookie)).
                 andExpect(status().isOk()).
                 andExpect(model().attribute(
-                        "tasks", accountDao.findByUsername("yoav").orElse(new Account()).getTasks())).
+                        "tasks", accountDao.findByUsername("yoav").orElseThrow(UsernameNotFoundException::new).getTasks())).
                 andExpect(view().name("dashboard/index"));
     }
 
@@ -89,7 +90,7 @@ public class DashboardControllerTest {
                 perform(get("/dashboard").session(session)).
                 andExpect(status().isOk()).
                 andExpect(model().attribute(
-                        "tasks", accountDao.findByUsername("yoavAbu").orElse(new Account()).getTasks())).
+                        "tasks", accountDao.findByUsername("yoavAbu").orElseThrow(UsernameNotFoundException::new).getTasks())).
                 andExpect(view().name("dashboard/index"));
     }
 
@@ -124,7 +125,7 @@ public class DashboardControllerTest {
         cookie.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
         cookie.setPath("/"); // global cookie accessible every where
 
-        assertThat(accountDao.findByUsername("yoav-spring").orElse(new Account()).getTasks()).hasSize(2);
+        assertThat(accountDao.findByUsername("yoav-spring").orElseThrow(UsernameNotFoundException::new).getTasks()).hasSize(2);
 
         mockMvc.
                 perform(post("/dashboard").
@@ -132,7 +133,7 @@ public class DashboardControllerTest {
                         param(
                                 "delete",
                                 String.valueOf(
-                                        accountDao.findByUsername("yoav-spring").orElse(new Account()).
+                                        accountDao.findByUsername("yoav-spring").orElseThrow(UsernameNotFoundException::new).
                                         getTasks().get(0).getId()
                                 ))).
                 andExpect(status().is3xxRedirection()).
@@ -140,7 +141,7 @@ public class DashboardControllerTest {
 
         entityManager.flush();
         entityManager.clear();
-        assertThat(accountDao.findByUsername("yoav-spring").orElse(new Account()).getTasks()).hasSize(1);
+        assertThat(accountDao.findByUsername("yoav-spring").orElseThrow(UsernameNotFoundException::new).getTasks()).hasSize(1);
     }
 
     @Test
@@ -165,7 +166,7 @@ public class DashboardControllerTest {
         cookie.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
         cookie.setPath("/"); // global cookie accessible every where
 
-        assertThat(accountDao.findByUsername("some user").orElse(new Account()).getTasks()).hasSize(2);
+        assertThat(accountDao.findByUsername("some user").orElseThrow(UsernameNotFoundException::new).getTasks()).hasSize(2);
 
         mockMvc.
                 perform(post("/dashboard").
@@ -173,7 +174,7 @@ public class DashboardControllerTest {
                         param(
                                 "delete",
                                 String.valueOf(
-                                        accountDao.findByUsername("some user").orElse(new Account()).
+                                        accountDao.findByUsername("some user").orElseThrow(UsernameNotFoundException::new).
                                                 getTasks().get(0).getId()
                                 ))).
                 andExpect(status().isOk()).
@@ -181,7 +182,7 @@ public class DashboardControllerTest {
 
         entityManager.flush();
         entityManager.clear();
-        assertThat(accountDao.findByUsername("some user").orElse(new Account()).getTasks()).hasSize(2);
+        assertThat(accountDao.findByUsername("some user").orElseThrow(UsernameNotFoundException::new).getTasks()).hasSize(2);
     }
 
     @Test
@@ -207,7 +208,7 @@ public class DashboardControllerTest {
                                 " ")).
                 andExpect(redirectedUrl("/dashboard"));
 
-        account = accountDao.findByUsername("some admin").orElse(new Account());
+        account = accountDao.findByUsername("some admin").orElseThrow(UsernameNotFoundException::new);
         assertThat(account.getUsername()).isEqualTo("some admin");
         account.getTasks().forEach(i -> {
             assertThat(i.getTask()).isNotEqualTo(" ");
@@ -237,7 +238,7 @@ public class DashboardControllerTest {
                                 "")).
                 andExpect(redirectedUrl("/dashboard"));
 
-        account = accountDao.findByUsername("some admin").orElse(new Account());
+        account = accountDao.findByUsername("some admin").orElseThrow(UsernameNotFoundException::new);
         assertThat(account.getUsername()).isEqualTo("some admin");
         account.getTasks().forEach(i -> {
             assertThat(i.getTask()).isNotEqualTo("");
@@ -267,7 +268,7 @@ public class DashboardControllerTest {
                                 "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")).
                 andExpect(redirectedUrl("/dashboard"));
 
-        account = accountDao.findByUsername("some admin").orElse(new Account());
+        account = accountDao.findByUsername("some admin").orElseThrow(UsernameNotFoundException::new);
         assertThat(account.getUsername()).isEqualTo("some admin");
         account.getTasks().forEach(i -> {
             assertThat(i.getTask()).isNotEqualTo("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
@@ -307,7 +308,7 @@ public class DashboardControllerTest {
                                 "this is a normal task")).
                 andExpect(redirectedUrl("/dashboard"));
 
-        account = accountDao.findByUsername("some admin").orElse(new Account());
+        account = accountDao.findByUsername("some admin").orElseThrow(UsernameNotFoundException::new);
         assertThat(account.getUsername()).isEqualTo("some admin");
         List<String> tasksOfAccount = tasksToStringList(account.getTasks());
         assertThat(tasksOfAccount.contains("this is a normal task")).isTrue();

@@ -3,6 +3,7 @@ package com.yoav.todolist.controllers;
 import com.yoav.todolist.dao.IAccountDao;
 import com.yoav.todolist.dao.IAdminDao;
 import com.yoav.todolist.dao.ITaskDao;
+import com.yoav.todolist.exceptions.UsernameNotFoundException;
 import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Task;
 import org.junit.Test;
@@ -121,7 +122,7 @@ public class AdminControllerTest {
                 perform(post("/admin").
                         param(
                                 "deleteAccount",
-                                String.valueOf(accountDao.findByUsername("some account").orElse(new Account()).getId())).
+                                String.valueOf(accountDao.findByUsername("some account").orElseThrow(UsernameNotFoundException::new).getId())).
                         session(session)).
                 andExpect(status().is3xxRedirection()).
                 andExpect(redirectedUrl("/admin"));
@@ -140,7 +141,7 @@ public class AdminControllerTest {
                 perform(post("/admin").
                         param(
                                 "deleteAccount",
-                                String.valueOf(accountDao.findByUsername("some account").orElse(new Account()).getId()))).
+                                String.valueOf(accountDao.findByUsername("some account").orElseThrow(UsernameNotFoundException::new).getId()))).
                 andExpect(status().isOk()).
                 andExpect(view().name("unauthorized"));
 
@@ -161,7 +162,7 @@ public class AdminControllerTest {
                 perform(get("/admin/some account").session(session)).
                 andExpect(status().isOk()).
                 andExpect(model().attribute(
-                        "tasks", accountDao.findByUsername("some account").orElse(new Account()).getTasks())).
+                        "tasks", accountDao.findByUsername("some account").orElseThrow(UsernameNotFoundException::new).getTasks())).
                 andExpect(view().name("admin/displayTasksOfUsers"));
     }
 
@@ -188,21 +189,21 @@ public class AdminControllerTest {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("isAdmin", true);
 
-        assertThat(accountDao.findByUsername("yoav").orElse(new Account()).getTasks()).hasSize(2);
+        assertThat(accountDao.findByUsername("yoav").orElseThrow(UsernameNotFoundException::new).getTasks()).hasSize(2);
 
         mockMvc.
                 perform(post("/admin/yoav").session(session).
                         param(
                                 "deleteTask",
                                 String.valueOf(accountDao.
-                                        findByUsername("yoav").orElse(new Account()).getTasks().get(0).getId())
+                                        findByUsername("yoav").orElseThrow(UsernameNotFoundException::new).getTasks().get(0).getId())
                         )).
                 andExpect(status().is3xxRedirection()).
                 andExpect(redirectedUrl("/admin/yoav"));
 
         entityManager.flush();
         entityManager.clear();
-        assertThat(accountDao.findByUsername("yoav").orElse(new Account()).getTasks()).hasSize(1);
+        assertThat(accountDao.findByUsername("yoav").orElseThrow(UsernameNotFoundException::new).getTasks()).hasSize(1);
     }
 
     @Test
@@ -212,19 +213,19 @@ public class AdminControllerTest {
         account.addTask(new Task("spring"));
         accountDao.add(account);
 
-        assertThat(accountDao.findByUsername("yoav").orElse(new Account()).getTasks()).hasSize(2);
+        assertThat(accountDao.findByUsername("yoav").orElseThrow(UsernameNotFoundException::new).getTasks()).hasSize(2);
 
         mockMvc.
                 perform(post("/admin/yoav").
                         param(
                                 "deleteTask",
                                 String.valueOf(accountDao.
-                                        findByUsername("yoav").orElse(new Account()).getTasks().get(0).getId())
+                                        findByUsername("yoav").orElseThrow(UsernameNotFoundException::new).getTasks().get(0).getId())
                         )).
                 andExpect(status().isOk()).
                 andExpect(view().name("unauthorized"));
 
-        assertThat(accountDao.findByUsername("yoav").orElse(new Account()).getTasks()).hasSize(2);
+        assertThat(accountDao.findByUsername("yoav").orElseThrow(UsernameNotFoundException::new).getTasks()).hasSize(2);
     }
 
     @Test

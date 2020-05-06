@@ -1,5 +1,6 @@
 package com.yoav.todolist.dao;
 
+import com.yoav.todolist.exceptions.UsernameNotFoundException;
 import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Task;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,14 +44,14 @@ class TaskRepositoryTest {
         account.addTask(new Task("task3"));
         accountDao.add(account);
 
-        assertThat(accountDao.findByUsername("yoav").orElse(new Account()).getTasks()).hasSize(3);
+        assertThat(accountDao.findByUsername("yoav").orElseThrow(UsernameNotFoundException::new).getTasks()).hasSize(3);
 
-        taskDao.deleteById(accountDao.findByUsername("yoav").orElse(new Account()).getTasks().get(0).getId());
+        taskDao.deleteById(accountDao.findByUsername("yoav").orElseThrow(UsernameNotFoundException::new).getTasks().get(0).getId());
 
         entityManager.flush();
         entityManager.clear();
 
-        assertThat(accountDao.findByUsername("yoav").orElse(new Account()).getTasks()).hasSize(2);
+        assertThat(accountDao.findByUsername("yoav").orElseThrow(UsernameNotFoundException::new).getTasks()).hasSize(2);
     }
 
 }
