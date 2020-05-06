@@ -1,6 +1,7 @@
 package com.yoav.todolist.service;
 
 import com.yoav.todolist.dao.IAccountDao;
+import com.yoav.todolist.exceptions.UsernameNotFoundException;
 import com.yoav.todolist.models.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,7 +44,7 @@ public class AccountService {
     }
 
     public Account findByUsername(String username) {
-        return accountDao.findByUsername(username).orElseThrow(() -> new NullPointerException("there is not existing account with this username therefor can find account by username"));
+        return accountDao.findByUsername(username).orElseThrow(UsernameNotFoundException::new);
     }
 
     public List<Account> getAll() {

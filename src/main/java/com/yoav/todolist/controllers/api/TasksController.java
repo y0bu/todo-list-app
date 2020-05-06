@@ -1,5 +1,6 @@
 package com.yoav.todolist.controllers.api;
 
+import com.yoav.todolist.exceptions.UsernameNotFoundException;
 import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Task;
 import com.yoav.todolist.service.AccountService;
@@ -45,7 +46,7 @@ public class TasksController {
     public ResponseEntity<List<Task>> getAllTasksBelongToSpecifiedUsername(@PathVariable String username) {
         try {
             return new ResponseEntity<>(accountService.findByUsername(username).getTasks(), new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException | NullPointerException e) {
+        } catch (UsernameNotFoundException e) {
             return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -64,7 +65,7 @@ public class TasksController {
             Account accountWantToAddTask = accountService.findByUsername(username);
             taskService.add(task, accountWantToAddTask);
             return new ResponseEntity<>("task added successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException | NullPointerException e) {
+        } catch (UsernameNotFoundException e) {
             return new ResponseEntity<>("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -86,7 +87,7 @@ public class TasksController {
             Task deleteTask = getTaskByUsernameAndSerialNumber(accountWantToDeleteTask, taskNumberOrder);
             taskService.delete(deleteTask, accountWantToDeleteTask);
             return new ResponseEntity<>("task deleted successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException | NullPointerException e) {
+        } catch (UsernameNotFoundException | IndexOutOfBoundsException e) {
             return new ResponseEntity<>("username do not exist or task not exist or serial number of task not correct", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -103,9 +104,9 @@ public class TasksController {
             Account accountToBeUpdated = accountService.findByUsername(username);
             accountToBeUpdated.setTasks(tasks);
             accountService.update(accountToBeUpdated);
-            return new ResponseEntity<String>("tasks updated successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException | NullPointerException e) {
-            return new ResponseEntity<String>("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("tasks updated successfully", new HttpHeaders(), HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.yoav.todolist.controllers.api;
 
+import com.yoav.todolist.exceptions.UsernameNotFoundException;
 import com.yoav.todolist.models.Account;
 import com.yoav.todolist.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class AccountsController {
     public ResponseEntity<Account> getCertainAccount(@PathVariable String username) {
         try {
             return new ResponseEntity<>(accountService.findByUsername(username), new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException | NullPointerException e) { // if there is no existing username in the database
+        } catch (UsernameNotFoundException e) { // if there is no existing username in the database
             return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -70,7 +71,7 @@ public class AccountsController {
             Account accountWantedToBeDeleted = accountService.findByUsername(username);
             accountService.delete(accountWantedToBeDeleted);
             return new ResponseEntity<>("the user deleted successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException | NullPointerException e) {
+        } catch (UsernameNotFoundException e) {
             return new ResponseEntity<>("the user is not existing in the database", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -94,7 +95,7 @@ public class AccountsController {
             account.setId(accountWantedToBeUpdated.getId());
             accountService.update(account);
             return new ResponseEntity<>("user updated successfully", new HttpHeaders(), HttpStatus.OK);
-        } catch (IndexOutOfBoundsException | NullPointerException e) {
+        } catch (UsernameNotFoundException e) {
             return new ResponseEntity<>("username do not exist", new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }

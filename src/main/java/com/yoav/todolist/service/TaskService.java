@@ -1,6 +1,7 @@
 package com.yoav.todolist.service;
 
 import com.yoav.todolist.dao.ITaskDao;
+import com.yoav.todolist.exceptions.UsernameNotFoundException;
 import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class TaskService {
     }
 
     public Task getById(int id) {
-        return taskDao.getById(id).orElseThrow(() -> new NullPointerException("not existing task id hence cant get task by id"));
+        return taskDao.getById(id).orElseThrow(UsernameNotFoundException::new);
     }
 
     public List<Task> getAll() {

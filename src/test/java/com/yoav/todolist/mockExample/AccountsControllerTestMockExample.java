@@ -1,6 +1,7 @@
 package com.yoav.todolist.mockExample;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yoav.todolist.exceptions.UsernameNotFoundException;
 import com.yoav.todolist.models.Account;
 import com.yoav.todolist.models.Task;
 import com.yoav.todolist.service.AccountService;
@@ -53,7 +54,7 @@ public class AccountsControllerTestMockExample {
         when(accountServiceMock.isExistByUsername(eq("exist"))).thenReturn(true);
 
         when(accountServiceMock.findByUsername(anyString())).thenReturn(new Account("exist", "password"));
-        when(accountServiceMock.findByUsername(eq("usernameNotExist"))).thenThrow(new NullPointerException("there is not existing account with this username therefor can find account by username"));
+        when(accountServiceMock.findByUsername(eq("usernameNotExist"))).thenThrow(new UsernameNotFoundException());
 
         Account account1 = new Account("username", "password");
         account1.setTasks(Arrays.asList(new Task("important task"), new Task("another task")));
